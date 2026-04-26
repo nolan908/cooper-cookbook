@@ -20,6 +20,8 @@ CREATE TABLE recipes (
     is_public BOOLEAN DEFAULT true,
     category_tags VARCHAR(255),
     author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    forked_from_recipe_id INT REFERENCES recipes(id) ON DELETE SET NULL,
+    original_author_id INT REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );

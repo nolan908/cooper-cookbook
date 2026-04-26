@@ -29,8 +29,13 @@ public class RecipeRepository {
         recipe.setIsPublic(rs.getBoolean("is_public"));
         recipe.setCategoryTags(rs.getString("category_tags"));
         recipe.setAuthorId(rs.getLong("author_id"));
-        recipe.setForkedFromRecipeId(rs.getObject("forked_from_recipe_id", Long.class));
-        recipe.setOriginalAuthorId(rs.getObject("original_author_id", Long.class));
+        
+        long forkedId = rs.getLong("forked_from_recipe_id");
+        recipe.setForkedFromRecipeId(rs.wasNull() ? null : forkedId);
+        
+        long originalAuthorId = rs.getLong("original_author_id");
+        recipe.setOriginalAuthorId(rs.wasNull() ? null : originalAuthorId);
+        
         return recipe;
     };
 
