@@ -17,7 +17,7 @@ public class RecipeRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private RowMapper<Recipe> recipeRowMapper = (rs, rowNum) -> {
+    private final RowMapper<Recipe> recipeRowMapper = (rs, rowNum) -> {
         Recipe recipe = new Recipe();
         recipe.setId(rs.getLong("id"));
         recipe.setTitle(rs.getString("title"));
@@ -29,6 +29,8 @@ public class RecipeRepository {
         recipe.setIsPublic(rs.getBoolean("is_public"));
         recipe.setCategoryTags(rs.getString("category_tags"));
         recipe.setAuthorId(rs.getLong("author_id"));
+        recipe.setForkedFromRecipeId(rs.getObject("forked_from_recipe_id", Long.class));
+        recipe.setOriginalAuthorId(rs.getObject("original_author_id", Long.class));
         return recipe;
     };
 
@@ -57,7 +59,43 @@ public class RecipeRepository {
                 recipe.getIsPublic(), recipe.getCategoryTags(), recipe.getAuthorId()
         );
     }
+    public Long saveAndReturnId(Recipe recipe) {
+        return jdbcTemplate.queryForObject(
+                "INSERT INTO recipes (title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id, forked_from_recipe_id, original_author_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class,
+                recipe.getTitle(),
+                recipe.getDescription(),
+                recipe.getPrepTime(),
+                recipe.getCookTime(),
+                recipe.getServings(),
+                recipe.getImageUrl(),
+                recipe.getIsPublic(),
+                recipe.getCategoryTags(),
+                recipe.getAuthorId(),
+                recipe.getForkedFromRecipeId(),
+                recipe.getOriginalAuthorId()
+        );
+    }
+    public void copyIngredients(Long originalRecipeId, Long newRecipeId) {
+        jdbcTemplate.update(
+                "INSERT INTO ingredients (recipe_id, name, quantity, unit, order_index) " +
+                        "SELECT ?, name, quantity, unit, order_index " +
+                        "FROM ingredients WHERE recipe_id = ?",
+                newRecipeId,
+                originalRecipeId
+        );
+    }
 
+    public void copySteps(Long originalRecipeId, Long newRecipeId) {
+        jdbcTemplate.update(
+                "INSERT INTO steps (recipe_id, instruction, step_number) " +
+                        "SELECT ?, instruction, step_number " +
+                        "FROM steps WHERE recipe_id = ?",
+                newRecipeId,
+                originalRecipeId
+        );
+    }
     public void update(Recipe recipe) {
         jdbcTemplate.update(
                 "UPDATE recipes SET title=?, description=?, prep_time=?, cook_time=?, servings=?, image_url=?, is_public=?, category_tags=? WHERE id=?",

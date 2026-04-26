@@ -11,6 +11,8 @@ public class Recipe {
     private Boolean isPublic;
     private String categoryTags;
     private Long authorId;
+    private Long forkedFromRecipeId;
+    private Long originalAuthorId;
 
     public Recipe() {}
 
@@ -43,4 +45,20 @@ public class Recipe {
 
     public Long getAuthorId() { return authorId; }
     public void setAuthorId(Long authorId) { this.authorId = authorId; }
+
+    public Long getForkedFromRecipeId() {
+        return forkedFromRecipeId;
+    }
+
+    public void setForkedFromRecipeId(Long forkedFromRecipeId) {
+        this.forkedFromRecipeId = forkedFromRecipeId;
+    }
+
+    public Long getOriginalAuthorId() {
+        return originalAuthorId;
+    }
+
+    public void setOriginalAuthorId(Long originalAuthorId) {
+        this.originalAuthorId = originalAuthorId;
+    }
 }

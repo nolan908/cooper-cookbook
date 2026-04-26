@@ -10,6 +10,7 @@ import MyRecipesPage from "./pages/MyRecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import SavedRecipesPage from "./pages/SavedRecipesPage";
+import EditRecipePage from "./pages/EditRecipePage";
 
 export default function App() {
   return (
@@ -50,6 +51,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <RecipeDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recipes/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditRecipePage />
                   </ProtectedRoute>
                 }
               />

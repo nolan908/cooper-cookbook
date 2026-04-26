@@ -50,6 +50,15 @@ public class RecipeController {
         return ResponseEntity.ok("Recipe created successfully");
     }
 
+    @PostMapping("/{id}/fork")
+    public ResponseEntity<Recipe> forkRecipe(
+            @PathVariable Long id,
+            @RequestParam Long userId
+    ) {
+        Recipe forkedRecipe = recipeService.forkRecipe(id, userId);
+        return ResponseEntity.ok(forkedRecipe);
+    }
+
     // PUT update recipe
     @PutMapping("/{id}")
     public ResponseEntity<String> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {

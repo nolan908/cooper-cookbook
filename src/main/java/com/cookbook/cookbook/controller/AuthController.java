@@ -23,22 +23,37 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    // POST register
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        // Check if username already exists
-        Optional<User> existing = userRepository.findByUsername(user.getUsername());
+    public ResponseEntity<String> register(@RequestBody Map<String, String> body) {
+
+        String username = body.get("username");
+        String email = body.get("email");
+        String password = body.get("password");
+        String displayName = body.get("displayName");
+        String bio = body.get("bio");
+
+        if (username == null || email == null || password == null) {
+            return ResponseEntity.badRequest().body("Username, email, and password are required");
+        }
+
+        Optional<User> existing = userRepository.findByUsername(username);
         if (existing.isPresent()) {
             return ResponseEntity.badRequest().body("Username already taken");
         }
-        // Hash the password
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setDisplayName(displayName);
+        user.setBio(bio);
         user.setRole("USER");
+
         userRepository.save(user);
+
         return ResponseEntity.ok("User registered successfully");
     }
 
-    // POST login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");

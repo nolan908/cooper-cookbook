@@ -18,6 +18,8 @@ export interface Recipe {
   isPublic: boolean;
   categoryTags: string;
   authorId: number;
+  forkedFromRecipeId?: number;
+  originalAuthorId?: number;
 }
 
 export interface Collection {
@@ -43,7 +45,7 @@ export interface LoginCredentials {
 export interface RegisterData {
   username: string;
   email: string;
-  passwordHash: string;
+  password: string;
   displayName: string;
   bio: string;
 }

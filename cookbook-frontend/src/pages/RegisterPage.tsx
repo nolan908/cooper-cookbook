@@ -25,7 +25,7 @@ export default function RegisterPage() {
       await register({
         username: form.username,
         email: form.email,
-        passwordHash: form.password,
+        password: form.password,
         displayName: form.displayName,
         bio: form.bio,
       });
