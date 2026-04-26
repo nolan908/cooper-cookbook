@@ -1,51 +1,33 @@
-# Testing Documentation — Cooper Cookbook
-**ECE-366 Spring 2026 | Unit Testing Suite**
+# Backend Testing - JUnit & Mockito
 
-This project utilizes **Unit Testing** to ensure business logic integrity, security, and data consistency. By using **JUnit 5** and **Mockito**, we validate the "brain" of the application in isolation without requiring a live database connection.
+This suite covers the core logic for recipes, users, and auth. We're using **JUnit 5** and **Mockito** so we can test the service layer without needing the database or Docker running.
 
----
+## Current Test Suite
 
-## 🛠️ Testing Stack
-- **JUnit 5 (Jupiter)**: Core framework for defining tests and assertions.
-- **Mockito**: Used for mocking Repository dependencies and verifying service-layer interactions.
-- **Spring Boot Test**: Used for application context validation.
+| Class | Test | Description |
+| :--- | :--- | :--- |
+| `RecipeServiceTest` | `testForkRecipeSuccess` | Checks that forking a public recipe copies all data and triggers ingredient/step migration. |
+| `RecipeServiceTest` | `testForkRecipePrivateFail` | Verifies that private recipes can't be forked (throws exception). |
+| `RecipeServiceTest` | `testCreateRecipe` | Basic check for saving recipes. |
+| `UserServiceTest` | `testGetUserByUsername` | Confirms user lookup by username works. |
+| `UserServiceTest` | `testCreateUser` | Confirms all new users are defaulted to the "USER" role. |
+| `AuthControllerTest` | `testRegisterSuccess` | Checks that new users can register correctly. |
+| `AuthControllerTest` | `testRegisterFailExists` | Checks that duplicate usernames are blocked (400 error). |
+| `AuthControllerTest` | `testLoginSuccess` | Confirms valid credentials return a JWT token. |
+| `AuthControllerTest` | `testLoginInvalidPassword` | Confirms wrong passwords return a 400 error. |
+| `CooperCookbookApplicationTests` | `contextLoads` | Standard Spring Boot context load check. |
 
----
+## Running Tests
 
-## 📋 Unit Test Suite Summary
-
-The following 10 tests are implemented and passing:
-
-| Category | Test Class | Test Case | Purpose / Logic Checked |
-| :--- | :--- | :--- | :--- |
-| **Recipes** | `RecipeServiceTest` | `testForkRecipeSuccess` | Verifies that forking a public recipe copies data correctly and triggers ingredient/step copying. |
-| **Recipes** | `RecipeServiceTest` | `testForkRecipePrivateFail` | **Security Check:** Ensures private recipes cannot be forked (throws `RuntimeException`). |
-| **Recipes** | `RecipeServiceTest` | `testCreateRecipe` | Confirms the Service correctly passes a new recipe to the Repository for saving. |
-| **Users** | `UserServiceTest` | `testGetUserByUsername` | Verifies that a user can be successfully retrieved from the database by their username. |
-| **Users** | `UserServiceTest` | `testCreateUser` | **Business Rule:** Ensures every new user is automatically assigned the `"USER"` role. |
-| **Auth** | `AuthControllerTest` | `testRegisterSuccess` | Confirms new users can register and receive a `200 OK` response. |
-| **Auth** | `AuthControllerTest` | `testRegisterFailExists` | **Validation:** Ensures registration is blocked if the username is already taken (`400 Bad Request`). |
-| **Auth** | `AuthControllerTest` | `testLoginSuccess` | Verifies that correct credentials return a valid JWT token for the user. |
-| **Auth** | `AuthControllerTest` | `testLoginInvalidPassword` | **Security:** Ensures login fails with a `400` status if the password does not match the encrypted hash. |
-| **System** | `CooperCookbookApplicationTests` | `contextLoads` | **Sanity Check:** Ensures the Spring Boot application starts and the context loads without errors. |
-
----
-
-## 🚀 Running the Tests
-
-To execute the test suite in your local environment, run:
-
+Run all tests from the root directory:
 ```bash
 ./mvnw test
 ```
 
-To run a specific test class (e.g., Recipe logic):
-
+To run a specific service's tests:
 ```bash
 ./mvnw test -Dtest=RecipeServiceTest
 ```
 
----
-
-## 🧠 Why Mocking?
-We use Mockito to "mock" the Repositories. This allows us to test the **Service Layer** logic (like security checks and role assignments) without needing the PostgreSQL Docker container to be running. It makes the tests extremely fast and deterministic.
+## Why we used Mockito
+By mocking the Repositories, we test the logic inside the Services (like security checks and role logic) without touching the actual PostgreSQL tables. It makes the tests fast and reliable for local development.
