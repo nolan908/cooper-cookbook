@@ -1,69 +1,70 @@
-# 🐟 COOPER × COOKBOOK
+# Cooper Cookbook
 
-### Artisanal community-led documentation of culinary heritage. Fresh from the source.
+### Project Overview
+Cooper Cookbook is a community-led documentation platform designed for the preservation and evolution of culinary heritage. The website allows users to discover artisanal recipes, maintain a personal inventory of favorites, and collaborate through a unique revision system.
 
-Cooper Cookbook is a premium digital anthology for curated recipes, designed with a focus on community exchange and high-end specialty food aesthetics. Built with a Spring Boot backend and a React/TypeScript frontend, it offers a robust platform for chefs to stash, organize, and revise their favorite culinary assets.
+As of early March 2026, this project is developed by Alex Valsamis and Nolan Griffith.
 
 ---
 
-## 🚀 Quick Start (Docker)
+### Aim
+The primary aim of Cooper Cookbook is to provide a digital catalog where culinary assets can be stashed, organized, and shared. By allowing users to "fork" or "clone" recipes, the platform encourages the natural evolution of dishes while maintaining clear attribution to the original authors.
 
-The fastest way to get the full stack running is using Docker Compose. Ensure you have Docker installed, then run:
+---
 
+### Core Features
+The current version (v3.4.0) includes the following functionality:
+
+*   **User Authentication:** Complete Sign In and Sign Up flows with secure BCrypt password hashing.
+*   **My Kitchen:** A dedicated space for users to manage their original culinary creations.
+*   **The Stash:** A personal inventory system for recipes saved from the broader community.
+*   **Integrated Collections:** A simplified organizational system located directly within the Stash tab, allowing users to sort stashed recipes into curated folders.
+*   **Recipe Management:** 
+    *   **Editing:** Full control over your own recipes, including titles, descriptions, ingredients, and preparation steps.
+    *   **Forking (Clone & Revise):** Create personal, editable copies of community recipes. The system automatically maintains a lineage record, noting the previous user who authored the recipe.
+    *   **Stashing:** One-click saving of recipes to your personal inventory.
+*   **Search:** A keyword-based search feature to filter the recipe catalog by string.
+*   **Security Tools:** 
+    *   **Change Password:** Secure update flow requiring current password verification.
+    *   **Forgot Password:** A simulation system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address.
+
+---
+
+### Technical Details & Setup
+
+The application is built using a Spring Boot backend, a React/TypeScript frontend, and a PostgreSQL database.
+
+#### Quick Start (Docker)
+Ensure Docker is running, then execute:
 ```bash
-# Clone the repository
-git clone https://github.com/nolan908/cooper-cookbook.git
-cd cooper-cookbook
-
-# Spin up the entire ecosystem (Database, Backend, UI)
 docker compose up -d --build
 ```
+Access the UI at: **http://localhost:5173**
 
-Access the application at: **[http://localhost:5173](http://localhost:5173)**
-
----
-
-## 🛠 Tech Stack
-
-*   **Frontend:** React 19, TypeScript, Vite, Tailwind CSS (Fishwife-inspired theme)
-*   **Backend:** Java 21, Spring Boot 3.5, Maven
-*   **Database:** PostgreSQL 15
-*   **Testing:** JUnit 5, Mockito (Unit & Service logic)
-*   **Security:** JWT-based authentication with BCrypt password hashing
+#### Initial State
+Upon first entry, the system is pre-populated with:
+*   Two demo users: `user1` (password: `password1`) and `user2` (password: `password2`).
+*   Three community recipes authored by the demo users.
+*   One initialized collection ("Summer Pantry") which starts empty.
 
 ---
 
-## ✨ Key Features
+### Testing Framework
+The backend logic is protected by a suite of 15 automated tests.
 
--   **The Stash:** A personal inventory system for handpicked recipes from the community.
--   **Collections Sidebar:** Integrated folder management that allows you to organize your stashed items into curated sets.
--   **Smart Forking:** Clone community recipes while maintaining attribution to the original author.
--   **Complete Recipe Lifecycle:** Full control over ingredients, preparation steps, and public/private visibility.
--   **Secure Account Management:** Multi-step verification for sensitive account changes.
--   **High-Contrast UI:** Industrial-chic design featuring the **Fraunces** editorial typeface.
+| Test Class | Category | Methods Covered | Description |
+|:---|:---|:---|:---|
+| **AuthControllerTest** | Controller | register, login | Verifies registration, duplicate handling, and secure login. |
+| **UserServiceTest** | Service | getUser, generateToken, resetPassword | Tests user retrieval and the simulated password recovery flow. |
+| **RecipeServiceTest** | Service | create, update, fork | Verifies recipe lifecycles and the "Clone & Revise" logic. |
+| **CollectionServiceTest** | Service | create, addRecipe, getRecipes | Ensures stashed recipes can be organized into folders. |
+| **ApplicationTests** | System | contextLoads | Ensures the Spring Boot context initializes correctly. |
 
----
-
-## 🧪 Testing
-
-We maintain a rigorous test suite protecting core logic. To run the backend tests:
-
-```bash
-./mvnw test
-```
-Refer to [README-TESTING.md](./README-TESTING.md) for a detailed breakdown of coverage.
+For more detailed information, see [README-TESTING.md](./README-TESTING.md).
 
 ---
 
-## 👤 Demo Access
+### Future Development
+The final version of Cooper Cookbook will include a comprehensive landing page with detailed instructions on how to maximize the platform's features.
 
-The database is pre-seeded with two demo accounts for testing:
-
-| Username | Password |
-| :--- | :--- |
-| `user1` | `password1` |
-| `user2` | `password2` |
-
----
-
-© 2026 COOPER COOKBOOK | Version 3.4.0
+© 2026 Alex Valsamis & Nolan Griffith | Version 3.4.0
