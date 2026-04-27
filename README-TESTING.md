@@ -36,4 +36,4 @@ Ensure you are in the project root and run:
 ./mvnw test
 ```
 
-*All tests are currently passing as of April 27, 2026.*
+*All 15 tests are currently passing as of April 27, 2026.*
