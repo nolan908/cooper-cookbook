@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +27,13 @@ public class UserRepository {
         user.setPasswordHash(rs.getString("password_hash"));
         user.setDisplayName(rs.getString("display_name"));
         user.setBio(rs.getString("bio"));
+        user.setProfilePictureUrl(rs.getString("profile_picture_url"));
         user.setRole(rs.getString("role"));
+        user.setResetToken(rs.getString("reset_token"));
+        Timestamp expiry = rs.getTimestamp("reset_token_expiry");
+        if (expiry != null) {
+            user.setResetTokenExpiry(expiry.toLocalDateTime());
+        }
         return user;
     };
 
@@ -43,18 +51,56 @@ public class UserRepository {
         return users.stream().findFirst();
     }
 
+    public Optional<User> findByEmail(String email) {
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", userRowMapper, email);
+        return users.stream().findFirst();
+    }
+
+    public Optional<User> findByResetToken(String token) {
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE reset_token = ?", userRowMapper, token);
+        return users.stream().findFirst();
+    }
+
+    public void updateResetToken(Long userId, String token, LocalDateTime expiry) {
+        jdbcTemplate.update(
+                "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?",
+                token, Timestamp.valueOf(expiry), userId
+        );
+    }
+
+    public void clearResetToken(Long userId) {
+        jdbcTemplate.update(
+                "UPDATE users SET reset_token = NULL, reset_token_expiry = NULL WHERE id = ?",
+                userId
+        );
+    }
+
     public void save(User user) {
         jdbcTemplate.update(
-                "INSERT INTO users (username, email, password_hash, display_name, bio, role) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO users (username, email, password_hash, display_name, bio, profile_picture_url, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 user.getUsername(), user.getEmail(), user.getPasswordHash(),
-                user.getDisplayName(), user.getBio(), user.getRole()
+                user.getDisplayName(), user.getBio(), user.getProfilePictureUrl(), user.getRole()
+        );
+    }
+
+    public void updateProfile(User user) {
+        jdbcTemplate.update(
+                "UPDATE users SET display_name=?, bio=?, profile_picture_url=? WHERE id=?",
+                user.getDisplayName(), user.getBio(), user.getProfilePictureUrl(), user.getId()
+        );
+    }
+
+    public void updateAccount(User user) {
+        jdbcTemplate.update(
+                "UPDATE users SET username=?, password_hash=? WHERE id=?",
+                user.getUsername(), user.getPasswordHash(), user.getId()
         );
     }
 
     public void update(User user) {
         jdbcTemplate.update(
-                "UPDATE users SET username=?, email=?, display_name=?, bio=? WHERE id=?",
-                user.getUsername(), user.getEmail(), user.getDisplayName(), user.getBio(), user.getId()
+                "UPDATE users SET username=?, email=?, display_name=?, bio=?, profile_picture_url=? WHERE id=?",
+                user.getUsername(), user.getEmail(), user.getDisplayName(), user.getBio(), user.getProfilePictureUrl(), user.getId()
         );
     }
 

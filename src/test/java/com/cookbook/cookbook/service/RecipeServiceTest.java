@@ -96,11 +96,29 @@ class RecipeServiceTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setTitle("New Recipe");
+        when(recipeRepository.saveAndReturnId(recipe)).thenReturn(10L);
 
         // Act
         recipeService.createRecipe(recipe);
 
         // Assert
-        verify(recipeRepository, times(1)).save(recipe);
+        verify(recipeRepository, times(1)).saveAndReturnId(recipe);
+    }
+
+    @Test
+    @DisplayName("Test Update Recipe")
+    void testUpdateRecipe() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        recipe.setTitle("Updated Recipe");
+
+        // Act
+        recipeService.updateRecipe(recipe);
+
+        // Assert
+        verify(recipeRepository, times(1)).update(recipe);
+        verify(ingredientRepository, times(1)).deleteByRecipeId(1L);
+        verify(stepRepository, times(1)).deleteByRecipeId(1L);
     }
 }

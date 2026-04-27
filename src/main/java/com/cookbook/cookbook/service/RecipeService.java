@@ -39,7 +39,11 @@ public class RecipeService {
     }
 
     public Optional<Recipe> getRecipeById(Long id) {
-        return recipeRepository.findById(id);
+        return recipeRepository.findById(id).map(recipe -> {
+            recipe.setIngredients(ingredientRepository.findByRecipeId(id));
+            recipe.setSteps(stepRepository.findByRecipeId(id));
+            return recipe;
+        });
     }
 
     public Recipe forkRecipe(Long recipeId, Long newUserId) {
@@ -73,11 +77,39 @@ public class RecipeService {
     }
 
     public void createRecipe(Recipe recipe) {
-        recipeRepository.save(recipe);
+        Long newId = recipeRepository.saveAndReturnId(recipe);
+        if (recipe.getIngredients() != null) {
+            recipe.getIngredients().forEach(i -> {
+                i.setRecipeId(newId);
+                ingredientRepository.save(i);
+            });
+        }
+        if (recipe.getSteps() != null) {
+            recipe.getSteps().forEach(s -> {
+                s.setRecipeId(newId);
+                stepRepository.save(s);
+            });
+        }
     }
 
     public void updateRecipe(Recipe recipe) {
         recipeRepository.update(recipe);
+
+        ingredientRepository.deleteByRecipeId(recipe.getId());
+        if (recipe.getIngredients() != null) {
+            recipe.getIngredients().forEach(i -> {
+                i.setRecipeId(recipe.getId());
+                ingredientRepository.save(i);
+            });
+        }
+
+        stepRepository.deleteByRecipeId(recipe.getId());
+        if (recipe.getSteps() != null) {
+            recipe.getSteps().forEach(s -> {
+                s.setRecipeId(recipe.getId());
+                stepRepository.save(s);
+            });
+        }
     }
 
     public void deleteRecipe(Long id) {

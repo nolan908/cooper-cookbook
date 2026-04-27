@@ -36,6 +36,7 @@ public class AuthController {
             String password = body.get("password");
             String displayName = body.get("displayName");
             String bio = body.get("bio");
+            String profilePictureUrl = body.get("profilePictureUrl");
 
             if (username == null || email == null || password == null) {
                 return ResponseEntity.badRequest().body("Username, email, and password are required");
@@ -53,6 +54,7 @@ public class AuthController {
             user.setPasswordHash(passwordEncoder.encode(password));
             user.setDisplayName(displayName);
             user.setBio(bio);
+            user.setProfilePictureUrl(profilePictureUrl);
             user.setRole("USER");
 
             userRepository.save(user);
@@ -69,6 +71,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
+        logger.info("Login attempt for user: {}, password: {}", username, password);
 
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) {

@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,14 +38,32 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should create user with USER role")
-    void testCreateUser() {
+    @DisplayName("Should generate reset token")
+    void testGenerateResetToken() {
         User user = new User();
-        user.setUsername("newuser");
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        userService.createUser(user);
+        String token = userService.generateResetToken("test@example.com");
 
-        assertEquals("USER", user.getRole());
-        verify(userRepository, times(1)).save(user);
+        assertNotNull(token);
+        verify(userRepository, times(1)).updateResetToken(eq(1L), anyString(), any(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Should reset password with valid token")
+    void testResetPassword() {
+        User user = new User();
+        user.setId(1L);
+        user.setResetToken("valid-token");
+        user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
+        
+        when(userRepository.findByResetToken("valid-token")).thenReturn(Optional.of(user));
+
+        userService.resetPassword("valid-token", "new-password");
+
+        verify(userRepository, times(1)).updateAccount(user);
+        verify(userRepository, times(1)).clearResetToken(1L);
     }
 }

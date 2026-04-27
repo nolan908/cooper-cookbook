@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import MyRecipesPage from "./pages/MyRecipesPage";
@@ -11,6 +13,7 @@ import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import SavedRecipesPage from "./pages/SavedRecipesPage";
 import EditRecipePage from "./pages/EditRecipePage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   return (
@@ -22,6 +25,8 @@ export default function App() {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route
                 path="/"
                 element={
@@ -75,6 +80,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <SavedRecipesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />

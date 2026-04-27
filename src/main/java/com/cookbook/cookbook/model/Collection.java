@@ -6,6 +6,7 @@ public class Collection {
     private String name;
     private String description;
     private Integer orderIndex;
+    private Integer recipeCount;
 
     public Collection() {}
 
@@ -23,4 +24,7 @@ public class Collection {
 
     public Integer getOrderIndex() { return orderIndex; }
     public void setOrderIndex(Integer orderIndex) { this.orderIndex = orderIndex; }
+
+    public Integer getRecipeCount() { return recipeCount; }
+    public void setRecipeCount(Integer recipeCount) { this.recipeCount = recipeCount; }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   getCollectionsByUser,
@@ -6,12 +6,14 @@ import {
   deleteCollection,
   addRecipeToCollection,
   removeRecipeFromCollection,
-  getAllRecipes,
+  getSavedRecipesByUser,
+  getRecipeById,
+  getRecipesInCollection,
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import type { Collection, Recipe } from "../api/types";
 
-// Standalone component so React doesn't recreate it on parent re-render
+// Enhanced visual recipe picker
 function RecipePicker({
   recipes,
   onConfirm,
@@ -24,8 +26,7 @@ function RecipePicker({
   confirmLabel: string;
 }) {
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const filtered = recipes.filter(
     (r) =>
@@ -34,53 +35,85 @@ function RecipePicker({
   );
 
   return (
-    <div className="mt-3 bg-slate-50 rounded-lg p-3 space-y-2">
+    <div className="mt-3 bg-brand-eggshell rounded-2xl p-6 border-4 border-fw-navy shadow-inner">
+      <div className="flex items-center justify-between mb-4 border-b-2 border-fw-navy/10 pb-4">
+        <h3 className="font-black text-fw-navy text-xs uppercase tracking-[0.2em]">Choose from your Stash</h3>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              if (!selectedId) return alert("Select a recipe first");
+              onConfirm(selectedId);
+            }}
+            className="text-[10px] font-black uppercase tracking-widest bg-fw-teal text-white border-2 border-fw-navy shadow-[2px_2px_0px_0px_rgba(14,27,43,1)] px-5 py-2 rounded transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+          >
+            {confirmLabel}
+          </button>
+          <button
+            onClick={onCancel}
+            className="text-[10px] font-black uppercase tracking-widest bg-white text-fw-navy border-2 border-fw-navy px-5 py-2 rounded transition-all"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
       <input
-        ref={inputRef}
         type="text"
-        placeholder="Search recipes by name or tag..."
+        placeholder="Search your stashed goods..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border-4 border-fw-navy rounded-xl px-4 py-3 text-sm mb-6 focus:outline-none focus:bg-fw-yellow transition-all font-black uppercase tracking-tight text-fw-navy placeholder:text-fw-navy/20"
         autoFocus
       />
-      <select
-        value={selected}
-        onChange={(e) => setSelected(parseInt(e.target.value))}
-        className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-        size={Math.min(filtered.length + 1, 6)}
-      >
-        <option value={0}>— Select a recipe —</option>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[400px] overflow-y-auto p-1 custom-scrollbar">
         {filtered.map((r) => (
-          <option key={r.id} value={r.id}>
-            {r.title}
-            {r.categoryTags ? ` (${r.categoryTags})` : ""}
-            {r.prepTime ? ` — ${r.prepTime + (r.cookTime || 0)}min total` : ""}
-          </option>
+          <button
+            key={r.id}
+            type="button"
+            onClick={() => setSelectedId(r.id)}
+            className={`text-left rounded-2xl overflow-hidden border-2 transition-all relative group ${
+              selectedId === r.id
+                ? "border-brand-basil ring-4 ring-brand-basil/10 bg-white scale-[0.98]"
+                : "border-transparent bg-white hover:border-brand-basil/20 shadow-sm hover:shadow-md"
+            }`}
+          >
+            <div className="aspect-square w-full bg-brand-eggshell overflow-hidden relative border-b-2 border-brand-basil/5">
+              {r.imageUrl ? (
+                <img src={r.imageUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-brand-basil/10">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+              )}
+              {selectedId === r.id && (
+                <div className="absolute inset-0 bg-brand-basil/40 backdrop-blur-[2px] flex items-center justify-center">
+                  <div className="bg-white rounded-full p-1.5 shadow-xl">
+                    <svg className="w-6 h-6 text-brand-basil" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="p-3">
+              <p className="text-xs font-black text-brand-espresso line-clamp-1 leading-tight mb-1">{r.title}</p>
+              <div className="h-1 w-4 bg-brand-terracotta/40 rounded-full"></div>
+            </div>
+          </button>
         ))}
-      </select>
-      <div className="flex gap-2">
-        <button
-          onClick={() => {
-            if (!selected) return alert("Select a recipe first");
-            onConfirm(selected);
-          }}
-          className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-1.5 rounded transition"
-        >
-          {confirmLabel}
-        </button>
-        <button
-          onClick={onCancel}
-          className="text-sm text-slate-400 hover:text-slate-600 px-3 py-1.5 transition"
-        >
-          Cancel
-        </button>
       </div>
+      {filtered.length === 0 && (
+        <div className="py-12 text-center">
+          <p className="text-sm font-bold text-brand-basil/40 italic">Nothing in your stash matches this search.</p>
+        </div>
+      )}
     </div>
   );
 }
 
-// Per-collection: track which recipes are inside
 interface CollectionWithRecipes extends Collection {
   recipes: Recipe[];
   loadingRecipes: boolean;
@@ -89,296 +122,224 @@ interface CollectionWithRecipes extends Collection {
 export default function CollectionsPage() {
   const { userId } = useAuth();
   const [collections, setCollections] = useState<CollectionWithRecipes[]>([]);
-  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
+  const [stashedRecipes, setStashedRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", description: "" });
   const [addingTo, setAddingTo] = useState<number | null>(null);
   const [expandedCol, setExpandedCol] = useState<number | null>(null);
 
-  const fetchCollections = async () => {
+  const fetchCollectionsData = async () => {
     if (!userId) return;
     setLoading(true);
     try {
-      const [colRes, recRes] = await Promise.all([
-        getCollectionsByUser(userId),
-        getAllRecipes(),
-      ]);
-      // Only show public recipes + user's own recipes in the picker
-      setAllRecipes(
-        recRes.data.filter(
-          (r: Recipe) => r.isPublic || r.authorId === userId,
-        ),
+      const colRes = await getCollectionsByUser(userId);
+      const savedRes = await getSavedRecipesByUser(userId);
+      const recipesInStash = await Promise.all(
+        savedRes.data.map(async (sr) => {
+          try {
+            const r = await getRecipeById(sr.recipeId);
+            return r.data;
+          } catch {
+            return null;
+          }
+        })
       );
-      // Initialize collections with empty recipe arrays
-      setCollections(
-        colRes.data.map((c: Collection) => ({
-          ...c,
-          recipes: [],
-          loadingRecipes: false,
-        })),
-      );
-    } catch {
-      // ignore
-    } finally {
-      setLoading(false);
-    }
+
+      setStashedRecipes(recipesInStash.filter((r): r is Recipe => r !== null));
+      setCollections(colRes.data.map((c: Collection) => ({ ...c, recipes: [], loadingRecipes: false })));
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => {
-    fetchCollections();
-  }, [userId]);
+  useEffect(() => { fetchCollectionsData(); }, [userId]);
 
-  // Load recipes for a collection when expanded
-  // The backend doesn't have a "get recipes by collection" endpoint,
-  // so we try adding each recipe and track which ones are already there.
-  // Better approach: just track locally what we add/remove.
-  const toggleExpand = (colId: number) => {
-    setExpandedCol(expandedCol === colId ? null : colId);
+  const toggleExpand = async (colId: number) => {
+    const isExpanding = expandedCol !== colId;
+    setExpandedCol(isExpanding ? colId : null);
+    if (isExpanding) {
+      setCollections(prev => prev.map(c => c.id === colId ? { ...c, loadingRecipes: true } : c));
+      try {
+        const res = await getRecipesInCollection(colId);
+        setCollections(prev => prev.map(c => c.id === colId ? { ...c, recipes: res.data, loadingRecipes: false } : c));
+      } catch {
+        setCollections(prev => prev.map(c => c.id === colId ? { ...c, loadingRecipes: false } : c));
+      }
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
     try {
-      await createCollection({
-        userId,
-        name: form.name,
-        description: form.description,
-        orderIndex: collections.length,
-      });
+      await createCollection({ userId, name: form.name, description: form.description, orderIndex: collections.length });
       setForm({ name: "", description: "" });
       setShowForm(false);
-      fetchCollections();
-    } catch {
-      alert("Failed to create collection");
-    }
+      fetchCollectionsData();
+    } catch { alert("Failed to create collection"); }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this collection?")) return;
     try {
       await deleteCollection(id);
-      setCollections((prev) => prev.filter((c) => c.id !== id));
-    } catch {
-      alert("Failed to delete collection");
-    }
+      setCollections(prev => prev.filter(c => c.id !== id));
+    } catch { alert("Failed to delete collection"); }
   };
 
   const handleAddRecipe = async (collectionId: number, recipeId: number) => {
     try {
       await addRecipeToCollection(collectionId, recipeId);
-      // Update local state: add the recipe to this collection
-      const recipe = allRecipes.find((r) => r.id === recipeId);
+      const recipe = stashedRecipes.find(r => r.id === recipeId);
       if (recipe) {
-        setCollections((prev) =>
-          prev.map((c) =>
-            c.id === collectionId
-              ? {
-                  ...c,
-                  recipes: c.recipes.some((r) => r.id === recipeId)
-                    ? c.recipes
-                    : [...c.recipes, recipe],
-                }
-              : c,
-          ),
-        );
+        setCollections(prev => prev.map(c => c.id === collectionId ? { ...c, recipes: c.recipes.some(r => r.id === recipeId) ? c.recipes : [...c.recipes, recipe] } : c));
       }
       setAddingTo(null);
-    } catch {
-      alert("Failed — recipe may already be in this collection");
-    }
+    } catch { alert("Failed — recipe may already be in this collection"); }
   };
 
   const handleRemoveRecipe = async (collectionId: number, recipeId: number) => {
     try {
       await removeRecipeFromCollection(collectionId, recipeId);
-      // Update local state: remove the recipe from this collection
-      setCollections((prev) =>
-        prev.map((c) =>
-          c.id === collectionId
-            ? { ...c, recipes: c.recipes.filter((r) => r.id !== recipeId) }
-            : c,
-        ),
-      );
-    } catch {
-      alert("Failed to remove recipe");
-    }
+      setCollections(prev => prev.map(c => c.id === collectionId ? { ...c, recipes: c.recipes.filter(r => r.id !== recipeId) } : c));
+    } catch { alert("Failed to remove recipe"); }
   };
 
   if (!userId || loading) {
-    return <div className="text-center py-12 text-slate-500">Loading...</div>;
+    return <div className="text-center py-20 text-fw-teal font-black animate-pulse tracking-widest text-4xl" style={{ fontFamily: 'var(--font-funky)' }}>FETCHING THE VAULT...</div>;
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="flex items-end justify-between mb-16 pb-8 border-b-8 border-fw-navy">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Collections</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Organize your recipes into folders
+          <h1 className="text-6xl font-black italic text-fw-navy tracking-tighter uppercase" style={{ fontFamily: 'var(--font-funky)' }}>My Collections.</h1>
+          <p className="text-fw-navy/40 font-bold text-sm mt-4">
+             Curated sets for your stashed treasures.
           </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded font-medium transition text-sm"
+          className={`px-10 py-4 border-4 border-fw-navy shadow-[6px_6px_0px_0px_rgba(14,27,43,1)] font-black uppercase tracking-widest text-xs transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none ${
+            showForm ? "bg-fw-cream text-fw-navy" : "bg-fw-salmon text-white"
+          }`}
         >
-          + New Collection
+          {showForm ? "CANCEL" : "+ NEW FOLDER"}
         </button>
       </div>
 
       {showForm && (
-        <form
-          onSubmit={handleCreate}
-          className="bg-white shadow-md rounded-lg p-4 mb-6 flex gap-3 items-end"
-        >
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              required
-            />
+        <form onSubmit={handleCreate} className="bg-white border-8 border-fw-navy shadow-[10px_10px_0px_0px_rgba(14,27,43,1)] p-12 mb-20 space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <label className="block text-[11px] font-black text-fw-navy/40 uppercase tracking-widest mb-4">Collection Title</label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                placeholder="E.G. MIDNIGHT SNACKS"
+                className="w-full border-4 border-fw-navy p-4 text-lg font-black focus:outline-none focus:bg-fw-yellow transition-all tracking-tight"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-black text-fw-navy/40 uppercase tracking-widest mb-4">Brief Narrative</label>
+              <input
+                type="text"
+                value={form.description}
+                onChange={e => setForm({ ...form, description: e.target.value })}
+                placeholder="WHAT'S THE STORY?"
+                className="w-full border-4 border-fw-navy p-4 text-lg font-black focus:outline-none focus:bg-fw-yellow transition-all tracking-tight"
+              />
+            </div>
           </div>
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+          <div className="flex justify-end pt-4">
+            <button type="submit" className="bg-fw-yellow text-fw-navy border-4 border-fw-navy shadow-[6px_6px_0px_0px_rgba(14,27,43,1)] px-12 py-5 font-black uppercase text-sm tracking-widest transition-all hover:bg-white active:shadow-none active:translate-x-[6px] active:translate-y-[6px]">
+              INITIALIZE COLLECTION
+            </button>
           </div>
-          <button
-            type="submit"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded text-sm font-medium transition"
-          >
-            Create
-          </button>
         </form>
       )}
 
       {collections.length === 0 ? (
-        <div className="text-center py-12 text-slate-400">
-          No collections yet. Create one to organize your recipes!
+        <div className="text-center py-32 border-8 border-dashed border-fw-navy/10 rounded-[3rem]">
+           <p className="text-fw-navy/20 font-black text-4xl tracking-tighter italic" style={{ fontFamily: 'var(--font-funky)' }}>NO COLLECTIONS FOUND.</p>
+           <button onClick={() => setShowForm(true)} className="mt-8 text-fw-salmon font-black uppercase tracking-widest hover:underline">Start Your First Set</button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {collections.map((col) => (
-            <div
-              key={col.id}
-              className="bg-white shadow-md rounded-lg border border-slate-200 overflow-hidden"
-            >
-              {/* Header */}
-              <div className="p-5 flex items-center justify-between">
-                <button
-                  onClick={() => toggleExpand(col.id)}
-                  className="text-left flex-1"
-                >
-                  <h2 className="font-bold text-lg text-slate-800">
-                    {col.name}
-                    <span className="text-sm font-normal text-slate-400 ml-2">
-                      ({col.recipes.length} recipe
-                      {col.recipes.length !== 1 ? "s" : ""})
-                    </span>
-                  </h2>
-                  {col.description && (
-                    <p className="text-slate-500 text-sm mt-1">
-                      {col.description}
-                    </p>
-                  )}
-                </button>
-                <div className="flex gap-2 shrink-0 ml-4">
-                  <button
-                    onClick={() => toggleExpand(col.id)}
-                    className="text-sm bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded transition"
-                  >
-                    {expandedCol === col.id ? "Collapse" : "View Recipes"}
+        <div className="space-y-12">
+          {collections.map(col => (
+            <div key={col.id} className="fw-card overflow-hidden group">
+              <div className="p-8 flex items-center justify-between bg-white hover:bg-fw-cream transition-colors cursor-pointer" onClick={() => toggleExpand(col.id)}>
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className={`w-12 h-12 border-4 border-fw-navy flex items-center justify-center transition-all ${expandedCol === col.id ? 'bg-fw-navy text-white rotate-90' : 'bg-fw-yellow text-fw-navy group-hover:bg-fw-teal group-hover:text-white'}`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <h2 className="font-black text-4xl text-fw-navy tracking-tighter uppercase leading-none italic" style={{ fontFamily: 'var(--font-funky)' }}>
+                      {col.name}.
+                    </h2>
+                  </div>
+                  {col.description && <p className="text-fw-navy/40 text-sm font-bold ml-16 tracking-tight">{col.description}</p>}
+                </div>
+                
+                <div className="flex gap-4 shrink-0 ml-8" onClick={e => e.stopPropagation()}>
+                   <div className="flex flex-col items-end pr-4 border-r-4 border-fw-navy/5">
+                      <span className="text-[9px] font-black text-fw-navy/20 uppercase tracking-widest">STASH SIZE</span>
+                      <span className="text-xl font-black text-fw-navy">
+                        {col.loadingRecipes || col.recipes.length > 0 ? col.recipes.length : (col.recipeCount || 0)}
+                      </span>
+                   </div>
+                  <button onClick={() => setAddingTo(addingTo === col.id ? null : col.id)} className="bg-fw-pink text-fw-navy border-2 border-fw-navy px-5 py-2 font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all shadow-[3px_3px_0px_0px_rgba(14,27,43,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    + ADD FROM STASH
                   </button>
-                  <button
-                    onClick={() => {
-                      setAddingTo(addingTo === col.id ? null : col.id);
-                    }}
-                    className="text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded transition"
-                  >
-                    + Add Recipe
-                  </button>
-                  <button
-                    onClick={() => handleDelete(col.id)}
-                    className="text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded transition"
-                  >
-                    Delete
+                  <button onClick={() => handleDelete(col.id)} className="text-[10px] font-black uppercase tracking-widest text-fw-navy/20 hover:text-fw-salmon transition-colors">
+                    DELETE
                   </button>
                 </div>
               </div>
 
-              {/* Add recipe picker */}
               {addingTo === col.id && (
-                <div className="px-5 pb-4">
-                  <RecipePicker
-                    recipes={allRecipes}
-                    onConfirm={(recipeId) => handleAddRecipe(col.id, recipeId)}
-                    onCancel={() => setAddingTo(null)}
-                    confirmLabel="Add to Collection"
-                  />
+                <div className="px-8 pb-8 animate-in fade-in slide-in-from-top-2 duration-500">
+                  <RecipePicker recipes={stashedRecipes} onConfirm={rid => handleAddRecipe(col.id, rid)} onCancel={() => setAddingTo(null)} confirmLabel="ADD TO FOLDER" />
                 </div>
               )}
 
-              {/* Expanded: show recipes in this collection */}
               {expandedCol === col.id && (
-                <div className="border-t border-slate-100 bg-slate-50 p-5">
-                  {col.recipes.length === 0 ? (
-                    <p className="text-sm text-slate-400 text-center py-4">
-                      No recipes in this collection yet. Click "+ Add Recipe"
-                      above.
-                    </p>
+                <div className="border-t-4 border-fw-navy bg-fw-cream/30 p-8 animate-in fade-in duration-700">
+                  {col.loadingRecipes ? (
+                    <div className="flex justify-center py-16"><div className="w-16 h-16 border-8 border-fw-teal border-t-transparent rounded-full animate-spin"></div></div>
+                  ) : col.recipes.length === 0 ? (
+                    <div className="py-20 text-center">
+                       <p className="text-fw-navy/20 font-black text-2xl tracking-tighter uppercase italic" style={{ fontFamily: 'var(--font-funky)' }}>This folder is empty.</p>
+                       <button onClick={() => setAddingTo(col.id)} className="mt-6 text-xs font-black text-fw-teal uppercase tracking-widest hover:underline decoration-4">Add some of your stashed recipes!</button>
+                    </div>
                   ) : (
-                    <div className="space-y-3">
-                      {col.recipes.map((recipe) => (
-                        <div
-                          key={recipe.id}
-                          className="bg-white rounded-lg p-3 flex items-center justify-between border border-slate-200"
-                        >
-                          <div className="flex-1">
-                            <Link
-                              to={`/recipe/${recipe.id}`}
-                              className="font-medium text-slate-800 hover:text-emerald-600 transition"
-                            >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {col.recipes.map(recipe => (
+                        <div key={recipe.id} className="bg-white border-4 border-fw-navy p-4 flex items-center gap-4 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none shadow-[4px_4px_0px_0px_rgba(14,27,43,1)] transition-all group/item relative overflow-hidden">
+                          <div className="w-24 h-24 border-4 border-fw-navy bg-fw-pink overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(14,27,43,1)] relative">
+                            {recipe.imageUrl ? (
+                              <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-1000" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-fw-navy/10 font-black text-4xl italic">?</div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0 pr-8 text-left">
+                            <Link to={`/recipe/${recipe.id}`} className="font-black text-xl text-fw-navy hover:text-fw-salmon transition-colors block truncate italic" style={{ fontFamily: 'var(--font-funky)' }}>
                               {recipe.title}
                             </Link>
-                            <div className="flex gap-2 mt-1 text-xs text-slate-500">
-                              {recipe.prepTime > 0 && (
-                                <span className="bg-slate-100 px-2 py-0.5 rounded">
-                                  Prep: {recipe.prepTime}min
-                                </span>
-                              )}
-                              {recipe.cookTime > 0 && (
-                                <span className="bg-slate-100 px-2 py-0.5 rounded">
-                                  Cook: {recipe.cookTime}min
-                                </span>
-                              )}
-                              {recipe.categoryTags && (
-                                <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">
-                                  {recipe.categoryTags}
-                                </span>
-                              )}
-                            </div>
+                            <p className="text-[10px] font-black text-fw-navy/40 mt-1 uppercase tracking-widest">{recipe.categoryTags || "LIMITED"}</p>
                           </div>
                           <button
-                            onClick={() =>
-                              handleRemoveRecipe(col.id, recipe.id)
-                            }
-                            className="text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded transition shrink-0 ml-3"
+                            onClick={e => { e.stopPropagation(); handleRemoveRecipe(col.id, recipe.id); }}
+                            className="absolute right-2 top-2 opacity-0 group-hover/item:opacity-100 text-fw-navy/20 hover:text-fw-salmon p-2 transition-all"
+                            title="Remove"
                           >
-                            Remove
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                           </button>
                         </div>
                       ))}

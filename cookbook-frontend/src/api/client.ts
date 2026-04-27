@@ -39,6 +39,14 @@ export const getToken = () => localStorage.getItem("token");
 // Users
 export const getUsers = () => api.get<User[]>("/users");
 export const getUserById = (id: number) => api.get<User>(`/users/${id}`);
+export const updateProfile = (id: number, data: Partial<User>) =>
+  api.put<string>(`/users/${id}/profile`, data);
+export const updateAccount = (id: number, data: any) =>
+  api.put<string>(`/users/${id}/account`, data);
+export const deleteUser = (id: number) => api.delete<string>(`/users/${id}`);
+export const forgotPassword = (email: string) => api.post<string>("/users/forgot-password", { email });
+export const resetPassword = (token: string, newPassword: string) => api.post<string>("/users/reset-password", { token, newPassword });
+export const verifyPassword = (id: number, password: string) => api.post<boolean>(`/users/${id}/verify-password`, { password });
 
 // Recipes
 export const getAllRecipes = () => api.get<Recipe[]>("/recipes");
@@ -52,12 +60,16 @@ export const updateRecipe = (id: number, recipe: Partial<Recipe>) =>
   api.put<string>(`/recipes/${id}`, recipe);
 export const deleteRecipe = (id: number) =>
   api.delete<string>(`/recipes/${id}`);
+export const forkRecipe = (id: number, userId: number) =>
+  api.post<Recipe>(`/recipes/${id}/fork?userId=${userId}`);
 
 // Collections
 export const getCollectionsByUser = (userId: number) =>
   api.get<Collection[]>(`/collections/user/${userId}`);
 export const getCollectionById = (id: number) =>
   api.get<Collection>(`/collections/${id}`);
+export const getRecipesInCollection = (id: number) =>
+  api.get<Recipe[]>(`/collections/${id}/recipes`);
 export const createCollection = (collection: Omit<Collection, "id">) =>
   api.post<string>("/collections", collection);
 export const updateCollection = (

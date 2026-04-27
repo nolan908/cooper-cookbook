@@ -6,72 +6,97 @@ import RecipeCard from "../components/RecipeCard";
 import type { Recipe } from "../api/types";
 
 export default function MyRecipesPage() {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
   const { userId } = useAuth();
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [filtered, setFiltered] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  const fetchRecipes = () => {
+  const fetchRecipes = async () => {
     if (!userId) return;
     setLoading(true);
-    getRecipesByAuthor(userId)
-      .then((res) => setRecipes(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    try {
+      const res = await getRecipesByAuthor(userId);
+      setRecipes(res.data);
+      setFiltered(res.data);
+    } catch {
+      // ignore
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(fetchRecipes, [userId]);
+  useEffect(() => {
+    fetchRecipes();
+  }, [userId]);
+
+  useEffect(() => {
+    const term = search.toLowerCase();
+    setFiltered(recipes.filter(r => 
+      r.title.toLowerCase().includes(term) || 
+      (r.categoryTags || "").toLowerCase().includes(term)
+    ));
+  }, [search, recipes]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this recipe?")) return;
     try {
       await deleteRecipe(id);
-      setRecipes((prev) => prev.filter((r) => r.id !== id));
+      fetchRecipes();
     } catch {
       alert("Failed to delete recipe");
     }
   };
 
   if (!userId || loading) {
-    return <div className="text-center py-12 text-slate-500">Loading...</div>;
+    return <div className="text-center py-20 text-fw-teal font-black animate-pulse tracking-widest text-4xl" style={{ fontFamily: 'var(--font-funky)' }}>PREPPING YOUR KITCHEN...</div>;
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-12 text-left">
+      <div className="flex items-end justify-between mb-16 pb-8 border-b-2 border-fw-navy/10">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">My Recipes</h1>
-          <p className="text-slate-500 text-sm mt-1">Recipes you've created</p>
+          <h1 className="text-6xl font-black italic text-fw-navy tracking-tighter uppercase" style={{ fontFamily: 'var(--font-funky)' }}>My Kitchen</h1>
+          <p className="text-fw-navy/40 font-bold uppercase text-sm tracking-[0.2em] mt-4">
+            Your personal collection of culinary creations
+          </p>
         </div>
         <Link
           to="/create"
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded font-medium transition text-sm"
+          className="bg-fw-salmon text-white border-4 border-fw-navy shadow-[6px_6px_0px_0px_rgba(14,27,43,1)] px-8 py-4 font-black uppercase tracking-widest text-xs transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
         >
-          + New Recipe
+          + Create Recipe
         </Link>
       </div>
 
-      {recipes.length === 0 ? (
-        <div className="text-center py-12 text-slate-400">
-          You haven't created any recipes yet.{" "}
-          <Link to="/create" className="text-emerald-600 hover:underline">Create your first recipe</Link>
+      <div className="mb-12">
+         <input 
+            type="text" 
+            placeholder="SEARCH YOUR CREATIONS..." 
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full bg-white border-4 border-fw-navy p-6 text-sm font-black focus:bg-fw-yellow transition-all outline-none uppercase tracking-widest placeholder:text-fw-navy/10"
+         />
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-center py-32 border-2 border-dashed border-fw-navy/10 rounded-3xl">
+          <p className="text-fw-navy/20 font-black text-4xl tracking-tighter italic" style={{ fontFamily: 'var(--font-funky)' }}>KITCHEN IS EMPTY.</p>
+          <Link to="/create" className="mt-8 inline-block text-fw-salmon font-black uppercase tracking-widest hover:underline font-black">Fire Up the Stove</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {recipes.map((recipe) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          {filtered.map((recipe) => (
             <RecipeCard
               key={recipe.id}
               recipe={recipe}
+              onEdit={() => {}}
+              hideAuthor={true}
               actions={
                 <div className="flex gap-2">
-                  <Link
-                    to={`/recipe/${recipe.id}`}
-                    className="text-sm bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded transition"
-                  >
-                    View
-                  </Link>
                   <button
                     onClick={() => handleDelete(recipe.id)}
-                    className="text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded transition"
+                    className="text-xs text-white bg-fw-salmon border-2 border-fw-navy px-3 py-1.5 rounded-lg font-bold transition shadow-[2px_2px_0px_0px_rgba(14,27,43,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]"
                   >
                     Delete
                   </button>

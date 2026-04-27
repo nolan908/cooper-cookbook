@@ -1,33 +1,39 @@
-# Backend Testing - JUnit & Mockito
+# Cooper Cookbook Testing Documentation
 
-This suite covers the core logic for recipes, users, and auth. We're using **JUnit 5** and **Mockito** so we can test the service layer without needing the database or Docker running.
+This document outlines the test suite for the Cooper Cookbook backend, covering unit and integration tests using **JUnit 5** and **Mockito**.
 
-## Current Test Suite
+## Test Suite Overview
 
-| Class | Test | Description |
-| :--- | :--- | :--- |
-| `RecipeServiceTest` | `testForkRecipeSuccess` | Checks that forking a public recipe copies all data and triggers ingredient/step migration. |
-| `RecipeServiceTest` | `testForkRecipePrivateFail` | Verifies that private recipes can't be forked (throws exception). |
-| `RecipeServiceTest` | `testCreateRecipe` | Basic check for saving recipes. |
-| `UserServiceTest` | `testGetUserByUsername` | Confirms user lookup by username works. |
-| `UserServiceTest` | `testCreateUser` | Confirms all new users are defaulted to the "USER" role. |
-| `AuthControllerTest` | `testRegisterSuccess` | Checks that new users can register correctly. |
-| `AuthControllerTest` | `testRegisterFailExists` | Checks that duplicate usernames are blocked (400 error). |
-| `AuthControllerTest` | `testLoginSuccess` | Confirms valid credentials return a JWT token. |
-| `AuthControllerTest` | `testLoginInvalidPassword` | Confirms wrong passwords return a 400 error. |
-| `CooperCookbookApplicationTests` | `contextLoads` | Standard Spring Boot context load check. |
+| Test Class | Category | Methods Covered | Description |
+|:---|:---|:---|:---|
+| **`AuthControllerTest`** | Controller | `register`, `login` | Verifies user registration, duplicate username handling, and secure login verification. |
+| **`UserServiceTest`** | Service (Mocked) | `getUserByUsername`, `generateResetToken`, `resetPassword` | Tests user retrieval and the complete logic for the password reset flow using Mockito. |
+| **`RecipeServiceTest`** | Service (Mocked) | `createRecipe`, `updateRecipe`, `forkRecipe` | Verifies recipe lifecycle management and the logic for cloning public recipes vs. blocking private ones. |
+| **`CollectionServiceTest`** | Service (Mocked) | `createCollection`, `addRecipeToCollection`, `getRecipesByCollectionId` | Ensures recipes can be organized into folders and retrieved accurately. |
+| **`CooperCookbookApplicationTests`** | System | `contextLoads` | A smoke test to ensure the Spring Boot application context initializes correctly. |
 
-## Running Tests
+## Detailed Coverage
 
-Run all tests from the root directory:
+### 1. Authentication & Security
+*   **Success Scenarios:** Valid registration and login with correct BCrypt matching.
+*   **Failure Scenarios:** Blocked registration for existing users and rejected login for incorrect passwords.
+*   **Reset Flow:** Verifies UUID token generation and expiration-time logic for password recovery.
+
+### 2. Recipe Management
+*   **Persistence:** Verifies that saving a recipe correctly handles associated database calls.
+*   **Forking Logic:** Ensures that forking a public recipe copies ingredients/steps, while forking a private recipe throws a `RuntimeException`.
+*   **Maintenance:** Ensures that updating a recipe correctly clears old associations (ingredients/steps) before saving new ones.
+
+### 3. Collections & Stashing
+*   **Organization:** Verifies the linkage between recipes and user-created folders.
+*   **Integrity:** Confirms that recipes are retrieved with full metadata (author name, PFP) when viewed within a collection.
+
+## How to Run Tests
+
+Ensure you are in the project root and run:
+
 ```bash
 ./mvnw test
 ```
 
-To run a specific service's tests:
-```bash
-./mvnw test -Dtest=RecipeServiceTest
-```
-
-## Why we used Mockito
-By mocking the Repositories, we test the logic inside the Services (like security checks and role logic) without touching the actual PostgreSQL tables. It makes the tests fast and reliable for local development.
+*All tests are currently passing as of April 27, 2026.*

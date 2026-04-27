@@ -30,6 +30,18 @@ public class RecipeRepository {
         recipe.setCategoryTags(rs.getString("category_tags"));
         recipe.setAuthorId(rs.getLong("author_id"));
         
+        // Joined user info
+        try {
+            recipe.setAuthorDisplayName(rs.getString("display_name"));
+            recipe.setAuthorProfilePictureUrl(rs.getString("profile_picture_url"));
+        } catch (Exception ignored) {}
+
+        // Joined fork info
+        try {
+            recipe.setForkedFromRecipeTitle(rs.getString("forked_from_title"));
+            recipe.setOriginalAuthorDisplayName(rs.getString("original_author_name"));
+        } catch (Exception ignored) {}
+
         long forkedId = rs.getLong("forked_from_recipe_id");
         recipe.setForkedFromRecipeId(rs.wasNull() ? null : forkedId);
         
@@ -39,20 +51,28 @@ public class RecipeRepository {
         return recipe;
     };
 
+    private final String BASE_SELECT = 
+        "SELECT r.*, u.display_name, u.profile_picture_url, " +
+        "orig.title as forked_from_title, ou.display_name as original_author_name " +
+        "FROM recipes r " +
+        "LEFT JOIN users u ON r.author_id = u.id " +
+        "LEFT JOIN recipes orig ON r.forked_from_recipe_id = orig.id " +
+        "LEFT JOIN users ou ON r.original_author_id = ou.id";
+
     public List<Recipe> findAll() {
-        return jdbcTemplate.query("SELECT * FROM recipes", recipeRowMapper);
+        return jdbcTemplate.query(BASE_SELECT, recipeRowMapper);
     }
 
     public List<Recipe> findByAuthorId(Long authorId) {
-        return jdbcTemplate.query("SELECT * FROM recipes WHERE author_id = ?", recipeRowMapper, authorId);
+        return jdbcTemplate.query(BASE_SELECT + " WHERE r.author_id = ?", recipeRowMapper, authorId);
     }
 
     public List<Recipe> findPublicRecipes() {
-        return jdbcTemplate.query("SELECT * FROM recipes WHERE is_public = true", recipeRowMapper);
+        return jdbcTemplate.query(BASE_SELECT + " WHERE r.is_public = true", recipeRowMapper);
     }
 
     public Optional<Recipe> findById(Long id) {
-        List<Recipe> recipes = jdbcTemplate.query("SELECT * FROM recipes WHERE id = ?", recipeRowMapper, id);
+        List<Recipe> recipes = jdbcTemplate.query(BASE_SELECT + " WHERE r.id = ?", recipeRowMapper, id);
         return recipes.stream().findFirst();
     }
 
@@ -64,6 +84,7 @@ public class RecipeRepository {
                 recipe.getIsPublic(), recipe.getCategoryTags(), recipe.getAuthorId()
         );
     }
+
     public Long saveAndReturnId(Recipe recipe) {
         return jdbcTemplate.queryForObject(
                 "INSERT INTO recipes (title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id, forked_from_recipe_id, original_author_id) " +
@@ -82,25 +103,7 @@ public class RecipeRepository {
                 recipe.getOriginalAuthorId()
         );
     }
-    public void copyIngredients(Long originalRecipeId, Long newRecipeId) {
-        jdbcTemplate.update(
-                "INSERT INTO ingredients (recipe_id, name, quantity, unit, order_index) " +
-                        "SELECT ?, name, quantity, unit, order_index " +
-                        "FROM ingredients WHERE recipe_id = ?",
-                newRecipeId,
-                originalRecipeId
-        );
-    }
 
-    public void copySteps(Long originalRecipeId, Long newRecipeId) {
-        jdbcTemplate.update(
-                "INSERT INTO steps (recipe_id, instruction, step_number) " +
-                        "SELECT ?, instruction, step_number " +
-                        "FROM steps WHERE recipe_id = ?",
-                newRecipeId,
-                originalRecipeId
-        );
-    }
     public void update(Recipe recipe) {
         jdbcTemplate.update(
                 "UPDATE recipes SET title=?, description=?, prep_time=?, cook_time=?, servings=?, image_url=?, is_public=?, category_tags=? WHERE id=?",
