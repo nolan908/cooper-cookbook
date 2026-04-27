@@ -46,8 +46,23 @@ public class RecipeController {
     // POST create recipe
     @PostMapping
     public ResponseEntity<String> createRecipe(@RequestBody Recipe recipe) {
-        recipeService.createRecipe(recipe);
-        return ResponseEntity.ok("Recipe created successfully");
+        System.out.println("Creating recipe: " + recipe.getTitle() + " for author: " + recipe.getAuthorId());
+        try {
+            recipeService.createRecipe(recipe);
+            return ResponseEntity.ok("Recipe created successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error creating recipe: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/fork")
+    public ResponseEntity<Recipe> forkRecipe(
+            @PathVariable Long id,
+            @RequestParam Long userId
+    ) {
+        Recipe forkedRecipe = recipeService.forkRecipe(id, userId);
+        return ResponseEntity.ok(forkedRecipe);
     }
 
     // PUT update recipe

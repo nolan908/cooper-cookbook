@@ -1,6 +1,7 @@
 package com.cookbook.cookbook.controller;
 
 import com.cookbook.cookbook.model.Collection;
+import com.cookbook.cookbook.model.Recipe;
 import com.cookbook.cookbook.service.CollectionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class CollectionController {
         return collectionService.getCollectionById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET recipes in a collection
+    @GetMapping("/{id}/recipes")
+    public List<Recipe> getRecipesByCollection(@PathVariable Long id) {
+        return collectionService.getRecipesByCollectionId(id);
     }
 
     // POST create collection

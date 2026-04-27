@@ -4,6 +4,7 @@ export interface User {
   email: string;
   displayName: string;
   bio: string;
+  profilePictureUrl?: string;
   role: string;
 }
 
@@ -18,6 +19,12 @@ export interface Recipe {
   isPublic: boolean;
   categoryTags: string;
   authorId: number;
+  authorDisplayName?: string;
+  authorProfilePictureUrl?: string;
+  forkedFromRecipeId?: number;
+  forkedFromRecipeTitle?: string;
+  originalAuthorId?: number;
+  originalAuthorDisplayName?: string;
 }
 
 export interface Collection {
@@ -26,6 +33,7 @@ export interface Collection {
   name: string;
   description: string;
   orderIndex: number;
+  recipeCount?: number;
 }
 
 export interface SavedRecipe {
@@ -43,7 +51,8 @@ export interface LoginCredentials {
 export interface RegisterData {
   username: string;
   email: string;
-  passwordHash: string;
+  password: string;
   displayName: string;
   bio: string;
+  profilePictureUrl: string;
 }

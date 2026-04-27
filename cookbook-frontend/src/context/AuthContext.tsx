@@ -12,6 +12,7 @@ interface AuthState {
   token: string | null;
   username: string | null;
   userId: number | null;
+  profilePictureUrl: string | null;
   isLoggedIn: boolean;
   setToken: (token: string | null) => void;
   logOut: () => void;
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthState>({
   token: null,
   username: null,
   userId: null,
+  profilePictureUrl: null,
   isLoggedIn: false,
   setToken: () => {},
   logOut: () => {},
@@ -31,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.getItem("token"),
   );
   const [userId, setUserId] = useState<number | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   const username = token ? jwtDecode(token) : null;
   const isLoggedIn = !!token;
@@ -41,16 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       localStorage.removeItem("token");
       setUserId(null);
+      setProfilePictureUrl(null);
     }
     setTokenState(t);
   };
 
   const logOut = () => setToken(null);
 
-  // Resolve username → userId on login
+  // Resolve username → userId & profile info on login
   useEffect(() => {
     if (!token || !username) {
       setUserId(null);
+      setProfilePictureUrl(null);
       return;
     }
     axios
@@ -59,14 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const me = res.data.find(
           (u: { username: string }) => u.username === username,
         );
-        if (me) setUserId(me.id);
+        if (me) {
+          setUserId(me.id);
+          setProfilePictureUrl(me.profilePictureUrl);
+        }
       })
       .catch(() => {});
   }, [token, username]);
 
   return (
     <AuthContext.Provider
-      value={{ token, username, userId, isLoggedIn, setToken, logOut }}
+      value={{ token, username, userId, profilePictureUrl, isLoggedIn, setToken, logOut }}
     >
       {children}
     </AuthContext.Provider>

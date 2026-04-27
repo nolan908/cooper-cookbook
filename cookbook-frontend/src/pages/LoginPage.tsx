@@ -55,6 +55,11 @@ export default function LoginPage() {
               className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               required
             />
+            <div className="flex justify-end mt-1">
+              <Link to="/forgot-password" title="Go to forgot password page" className="text-xs text-emerald-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
           </div>
           <button
             type="submit"

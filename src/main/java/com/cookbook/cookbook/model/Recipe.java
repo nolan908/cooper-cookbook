@@ -1,5 +1,8 @@
 package com.cookbook.cookbook.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Recipe {
     private Long id;
     private String title;
@@ -11,6 +14,14 @@ public class Recipe {
     private Boolean isPublic;
     private String categoryTags;
     private Long authorId;
+    private String authorDisplayName;
+    private String authorProfilePictureUrl;
+    private Long forkedFromRecipeId;
+    private String forkedFromRecipeTitle;
+    private Long originalAuthorId;
+    private String originalAuthorDisplayName;
+    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<Step> steps = new ArrayList<>();
 
     public Recipe() {}
 
@@ -43,4 +54,48 @@ public class Recipe {
 
     public Long getAuthorId() { return authorId; }
     public void setAuthorId(Long authorId) { this.authorId = authorId; }
+
+    public String getAuthorDisplayName() { return authorDisplayName; }
+    public void setAuthorDisplayName(String authorDisplayName) { this.authorDisplayName = authorDisplayName; }
+
+    public String getAuthorProfilePictureUrl() { return authorProfilePictureUrl; }
+    public void setAuthorProfilePictureUrl(String authorProfilePictureUrl) { this.authorProfilePictureUrl = authorProfilePictureUrl; }
+
+    public Long getForkedFromRecipeId() {
+        return forkedFromRecipeId;
+    }
+
+    public void setForkedFromRecipeId(Long forkedFromRecipeId) {
+        this.forkedFromRecipeId = forkedFromRecipeId;
+    }
+
+    public String getForkedFromRecipeTitle() {
+        return forkedFromRecipeTitle;
+    }
+
+    public void setForkedFromRecipeTitle(String forkedFromRecipeTitle) {
+        this.forkedFromRecipeTitle = forkedFromRecipeTitle;
+    }
+
+    public Long getOriginalAuthorId() {
+        return originalAuthorId;
+    }
+
+    public void setOriginalAuthorId(Long originalAuthorId) {
+        this.originalAuthorId = originalAuthorId;
+    }
+
+    public String getOriginalAuthorDisplayName() {
+        return originalAuthorDisplayName;
+    }
+
+    public void setOriginalAuthorDisplayName(String originalAuthorDisplayName) {
+        this.originalAuthorDisplayName = originalAuthorDisplayName;
+    }
+
+    public List<Ingredient> getIngredients() { return ingredients; }
+    public void setIngredients(List<Ingredient> ingredients) { this.ingredients = ingredients; }
+
+    public List<Step> getSteps() { return steps; }
+    public void setSteps(List<Step> steps) { this.steps = steps; }
 }

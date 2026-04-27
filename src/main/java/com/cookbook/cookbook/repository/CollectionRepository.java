@@ -1,6 +1,7 @@
 package com.cookbook.cookbook.repository;
 
 import com.cookbook.cookbook.model.Collection;
+import com.cookbook.cookbook.model.Recipe;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -24,19 +25,33 @@ public class CollectionRepository {
         collection.setName(rs.getString("name"));
         collection.setDescription(rs.getString("description"));
         collection.setOrderIndex(rs.getInt("order_index"));
+        
+        // Try to get joined recipe count
+        try {
+            collection.setRecipeCount(rs.getInt("recipe_count"));
+        } catch (Exception ignored) {
+            collection.setRecipeCount(0);
+        }
+        
         return collection;
     };
 
+    private final String BASE_SELECT = 
+        "SELECT c.*, COUNT(cr.recipe_id) as recipe_count " +
+        "FROM collections c " +
+        "LEFT JOIN collection_recipes cr ON c.id = cr.collection_id " +
+        "GROUP BY c.id";
+
     public List<Collection> findAll() {
-        return jdbcTemplate.query("SELECT * FROM collections", collectionRowMapper);
+        return jdbcTemplate.query(BASE_SELECT, collectionRowMapper);
     }
 
     public List<Collection> findByUserId(Long userId) {
-        return jdbcTemplate.query("SELECT * FROM collections WHERE user_id = ?", collectionRowMapper, userId);
+        return jdbcTemplate.query(BASE_SELECT + " HAVING c.user_id = ?", collectionRowMapper, userId);
     }
 
     public Optional<Collection> findById(Long id) {
-        List<Collection> collections = jdbcTemplate.query("SELECT * FROM collections WHERE id = ?", collectionRowMapper, id);
+        List<Collection> collections = jdbcTemplate.query(BASE_SELECT + " HAVING c.id = ?", collectionRowMapper, id);
         return collections.stream().findFirst();
     }
 
@@ -70,5 +85,30 @@ public class CollectionRepository {
                 "DELETE FROM collection_recipes WHERE collection_id = ? AND recipe_id = ?",
                 collectionId, recipeId
         );
+    }
+
+    public List<Recipe> findRecipesByCollectionId(Long collectionId) {
+        String sql = "SELECT r.*, u.display_name, u.profile_picture_url " +
+                     "FROM recipes r " +
+                     "JOIN users u ON r.author_id = u.id " +
+                     "JOIN collection_recipes cr ON r.id = cr.recipe_id " +
+                     "WHERE cr.collection_id = ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Recipe recipe = new Recipe();
+            recipe.setId(rs.getLong("id"));
+            recipe.setTitle(rs.getString("title"));
+            recipe.setDescription(rs.getString("description"));
+            recipe.setPrepTime(rs.getInt("prep_time"));
+            recipe.setCookTime(rs.getInt("cook_time"));
+            recipe.setServings(rs.getInt("servings"));
+            recipe.setImageUrl(rs.getString("image_url"));
+            recipe.setIsPublic(rs.getBoolean("is_public"));
+            recipe.setCategoryTags(rs.getString("category_tags"));
+            recipe.setAuthorId(rs.getLong("author_id"));
+            recipe.setAuthorDisplayName(rs.getString("display_name"));
+            recipe.setAuthorProfilePictureUrl(rs.getString("profile_picture_url"));
+            return recipe;
+        }, collectionId);
     }
 }

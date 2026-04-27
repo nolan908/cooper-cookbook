@@ -1,6 +1,7 @@
 package com.cookbook.cookbook.service;
 
 import com.cookbook.cookbook.model.Collection;
+import com.cookbook.cookbook.model.Recipe;
 import com.cookbook.cookbook.repository.CollectionRepository;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +47,9 @@ public class CollectionService {
 
     public void removeRecipeFromCollection(Long collectionId, Long recipeId) {
         collectionRepository.removeRecipeFromCollection(collectionId, recipeId);
+    }
+
+    public List<Recipe> getRecipesByCollectionId(Long collectionId) {
+        return collectionRepository.findRecipesByCollectionId(collectionId);
     }
 }
