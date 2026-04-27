@@ -1,16 +1,12 @@
 # Cooper Cookbook
 
 ### Project Overview
-Cooper Cookbook is a community-led documentation platform designed for the preservation and evolution of culinary heritage. The website allows users to discover artisanal recipes, maintain a personal inventory of favorites, and collaborate through a unique revision system.
+Cooper Cookbook is a community-led documentation platform designed for recipes. The website allows users to discover recipes, maintain a personal inventory of favorites, and collaborate through a unique revision system.
 
 As of early March 2026, this project is developed by Alex Valsamis and Nolan Griffith.
 
----
-
 ### Aim
 The primary aim of Cooper Cookbook is to provide a digital catalog where culinary assets can be stashed, organized, and shared. By allowing users to "fork" or "clone" recipes, the platform encourages the natural evolution of dishes while maintaining clear attribution to the original authors.
-
----
 
 ### Core Features
 The current version (v3.4.0) includes the following functionality:
@@ -23,10 +19,10 @@ The current version (v3.4.0) includes the following functionality:
     *   **Editing:** Full control over your own recipes, including titles, descriptions, ingredients, and preparation steps.
     *   **Forking (Clone & Revise):** Create personal, editable copies of community recipes. The system automatically maintains a lineage record, noting the previous user who authored the recipe.
     *   **Stashing:** One-click saving of recipes to your personal inventory.
-*   **Search:** A keyword-based search feature to filter the recipe catalog by string.
+*   **Search:** A keyword-based search feature to filter the recipe catalog by string. Additional filtering is possible if enough time permits, however not required.
 *   **Security Tools:** 
     *   **Change Password:** Secure update flow requiring current password verification.
-    *   **Forgot Password:** A simulation system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address.
+    *   **Forgot Password:** A simulation system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address. The "forgot password" option via email address is still a work in progress; the "forgot password" option when already logged in still works.
 
 ---
 
@@ -35,7 +31,7 @@ The current version (v3.4.0) includes the following functionality:
 The application is built using a Spring Boot backend, a React/TypeScript frontend, and a PostgreSQL database.
 
 #### Quick Start (Docker)
-Ensure Docker is running, then execute:
+Ensure Docker Desktop is running, then execute:
 ```bash
 docker compose up -d --build
 ```
@@ -50,7 +46,7 @@ Upon first entry, the system is pre-populated with:
 ---
 
 ### Testing Framework
-The backend logic is protected by a suite of 15 automated tests.
+The backend logic is protected by a suite of 15 automated tests. Keep in mind that a minimum of 25% of required tests are required for this project.
 
 | Test Class | Category | Methods Covered | Description |
 |:---|:---|:---|:---|
@@ -67,4 +63,4 @@ For more detailed information, see [README-TESTING.md](./README-TESTING.md).
 ### Future Development
 The final version of Cooper Cookbook will include a comprehensive landing page with detailed instructions on how to maximize the platform's features.
 
-© 2026 Alex Valsamis & Nolan Griffith | Version 3.4.0
+2026 Alex Valsamis & Nolan Griffith 
