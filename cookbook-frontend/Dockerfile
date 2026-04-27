@@ -1,13 +1,20 @@
-# pull official base image
-FROM node:22
-# set working directory
+# Stage 1: Build React App
+FROM node:22 AS build
 WORKDIR /app
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH=/app/node_modules/.bin:$PATH
-# install app dependencies
 COPY package*.json ./
 RUN npm ci
-# add app
-COPY . ./
-# start Vite dev server and bind all interfaces for Docker port mapping
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+# Default backend URL (can be overridden by Azure environment variable)
+ENV BACKEND_URL=http://app:8080
+
+EXPOSE 80
+
+# Nginx will automatically substitute variables in templates/*.template into /etc/nginx/conf.d/
+CMD ["nginx", "-g", "daemon off;"]
