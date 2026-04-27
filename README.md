@@ -3,10 +3,17 @@
 ### Project Overview
 Cooper Cookbook is a community-led documentation platform designed for recipes. The website allows users to discover recipes, maintain a personal inventory of favorites, and collaborate through a unique revision system.
 
-As of early March 2026, this project is developed by Alex Valsamis and Nolan Griffith.
+As of early March 2026, this project is developed by Alex Valsamis and Nolan Griffith. Due to change in teamwork structure, documentation via Projects and pull requests via personal branches of each team member were used.
 
 ### Aim
 The primary aim of Cooper Cookbook is to provide a digital catalog where culinary assets can be stashed, organized, and shared. By allowing users to "fork" or "clone" recipes, the platform encourages the natural evolution of dishes while maintaining clear attribution to the original authors.
+
+### Progress
+
+The current progress is logged in "Projects" in the Cooper Cookbook Progress Log. When we finish tasks, we move the issue to its respective category (In Progress, Done, etc.).
+
+This project was partially made with use of Gemini CLI tools. 
+
 
 ### Core Features
 The current version (v3.4.0) includes the following functionality:
@@ -41,7 +48,7 @@ Access the UI at: **http://localhost:5173**
 Upon first entry, the system is pre-populated with:
 *   Two demo users: `user1` (password: `password1`) and `user2` (password: `password2`).
 *   Three community recipes authored by the demo users.
-*   One initialized collection ("Summer Pantry") which starts empty.
+*   One initialized collection ("Summer Pantry") which starts empty. 
 
 ---
 
@@ -56,7 +63,7 @@ The backend logic is protected by a suite of 15 automated tests. Keep in mind th
 | **CollectionServiceTest** | Service | create, addRecipe, getRecipes | Ensures stashed recipes can be organized into folders. |
 | **ApplicationTests** | System | contextLoads | Ensures the Spring Boot context initializes correctly. |
 
-For more detailed information, see [README-TESTING.md](./README-TESTING.md).
+For more detailed information on the 15 unit tests, see [README-TESTING.md](./README-TESTING.md).
 
 ---
 
