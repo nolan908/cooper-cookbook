@@ -142,12 +142,11 @@ export default function ImagePicker({ value, onChange, label, type = "recipe", h
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-fw-navy/5">
-                  <img 
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlwNmyJqapbAylLT0BOQoFROVT9j1ypHgExw&s" 
-                    alt="Chef Hat" 
-                    className="w-12 h-12 object-contain mix-blend-multiply opacity-20" 
-                  />
+                <div className="w-full h-full flex items-center justify-center bg-fw-navy/5 text-fw-navy/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                 </div>
               )}
           </div>

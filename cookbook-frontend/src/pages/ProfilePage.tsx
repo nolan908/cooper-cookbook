@@ -151,10 +151,14 @@ export default function ProfilePage() {
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <div className="text-fw-navy/20 font-black text-2xl tracking-tighter">PFP</div>
+              <div className="w-full h-full bg-fw-navy/5 flex items-center justify-center text-fw-navy/20">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+              </svg>
+              </div>
               )}
-            </div>
-            <h2 className="text-3xl font-black italic text-fw-navy leading-none line-clamp-2 break-words w-full" style={{ fontFamily: 'var(--font-funky)' }}>
+              </div>            <h2 className="text-3xl font-black italic text-fw-navy leading-none line-clamp-2 break-words w-full" style={{ fontFamily: 'var(--font-funky)' }}>
               {profileForm.displayName || "Unknown Chef"}
             </h2>
             <p className="text-fw-navy/40 font-bold text-[10px] tracking-widest mt-3">Culinary Artist</p>

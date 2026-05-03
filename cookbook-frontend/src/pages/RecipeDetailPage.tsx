@@ -90,7 +90,12 @@ export default function RecipeDetailPage() {
  {recipe.imageUrl ? (
  <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-auto object-cover"/>
  ) : (
- <div className="w-full aspect-square bg-fw-pink"></div>
+ <div className="w-full aspect-square bg-fw-yellow/10 flex items-center justify-center text-fw-navy/20">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-32 h-32">
+ <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+ <line x1="6" y1="17" x2="18" y2="17" />
+ </svg>
+ </div>
  )}
  </div>
  
@@ -120,9 +125,11 @@ export default function RecipeDetailPage() {
  {/* Right: Content */}
  <div className="flex flex-col">
  <div className="mb-8">
- <span className="bg-fw-teal text-white px-3 py-1 text-[10px] font-black tracking-widest border-2 border-fw-navy mb-4 inline-block shadow-[2px_2px_0px_0px_rgba(17,17,17,1)]">
- {recipe.categoryTags || 'CANNED GOOD'}
+ {recipe.categoryTags && (
+ <span className="bg-fw-teal text-white px-3 py-1 text-[10px] font-black tracking-widest border-2 border-fw-navy mb-4 inline-block shadow-[2px_2px_0px_0px_rgba(17,17,17,1)] uppercase">
+ {recipe.categoryTags.split(',')[0]}
  </span>
+ )}
  <h1 className="text-6xl md:text-7xl font-black italic tracking-tighter leading-[0.9] text-fw-navy mb-6">
  {recipe.title}
  </h1>
@@ -135,7 +142,7 @@ export default function RecipeDetailPage() {
  </div>
 
  <p className="text-xl font-bold leading-snug mb-10 text-fw-navy/80 tracking-tight">
- {recipe.description}
+ {recipe.description || 'No information available'}
  </p>
 
  <div className="flex gap-4 mb-16">
@@ -160,26 +167,34 @@ export default function RecipeDetailPage() {
 
  <div className="space-y-12">
  <section>
- <h2 className="text-2xl font-black italic mb-8 underline decoration-fw-salmon underline-offset-8">INGREDIENTS.</h2>
+ <h2 className="text-2xl font-black italic mb-8 underline decoration-fw-salmon underline-offset-8">INGREDIENTS</h2>
  <ul className="space-y-4">
- {recipe.ingredients?.map((ing: Ingredient, i: number) => (
- <li key={i} className="flex items-center gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2">
- <span className="text-fw-salmon shrink-0 w-24">{ing.quantity} {ing.unit}</span>
- <span className="text-fw-navy">{ing.name}</span>
- </li>
- ))}
+ {recipe.ingredients && recipe.ingredients.length > 0 ? (
+   recipe.ingredients.map((ing: Ingredient, i: number) => (
+     <li key={i} className="flex items-center gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2">
+       <span className="text-fw-salmon shrink-0 w-24">{ing.quantity} {ing.unit}</span>
+       <span className="text-fw-navy">{ing.name}</span>
+     </li>
+   ))
+ ) : (
+   <p className="text-fw-navy/30 font-bold italic">No information available</p>
+ )}
  </ul>
  </section>
 
  <section>
- <h2 className="text-4xl font-black italic mb-8 underline decoration-fw-teal underline-offset-8">METHOD.</h2>
+ <h2 className="text-4xl font-black italic mb-8 underline decoration-fw-teal underline-offset-8">METHOD</h2>
  <ol className="space-y-10">
- {recipe.steps?.map((step: Step, i: number) => (
- <li key={i} className="flex gap-6 group">
- <span className="text-5xl font-black text-fw-navy/10 group-hover:text-fw-salmon transition-colors italic">{i+1}</span>
- <p className="text-xl font-bold tracking-tight leading-tight pt-2">{step.instruction}</p>
- </li>
- ))}
+ {recipe.steps && recipe.steps.length > 0 ? (
+   recipe.steps.map((step: Step, i: number) => (
+     <li key={i} className="flex gap-6 group">
+       <span className="text-5xl font-black text-fw-navy/10 group-hover:text-fw-salmon transition-colors italic">{i+1}</span>
+       <p className="text-xl font-bold tracking-tight leading-tight pt-2">{step.instruction}</p>
+     </li>
+   ))
+ ) : (
+   <p className="text-fw-navy/30 font-bold italic">No information available</p>
+ )}
  </ol>
  </section>
  </div>

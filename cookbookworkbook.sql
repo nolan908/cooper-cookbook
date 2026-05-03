@@ -1,3 +1,12 @@
+-- CLEAN SLATE
+DROP TABLE IF EXISTS saved_recipes CASCADE;
+DROP TABLE IF EXISTS collection_recipes CASCADE;
+DROP TABLE IF EXISTS collections CASCADE;
+DROP TABLE IF EXISTS steps CASCADE;
+DROP TABLE IF EXISTS ingredients CASCADE;
+DROP TABLE IF EXISTS recipes CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -69,33 +78,50 @@ CREATE TABLE saved_recipes (
     UNIQUE(user_id, recipe_id)
 );
 
-CREATE INDEX idx_recipes_author ON recipes(author_id);
-CREATE INDEX idx_recipes_public ON recipes(is_public);
-CREATE INDEX idx_saved_recipes_user ON saved_recipes(user_id);
-
 -- SEED DATA
+-- Passwords are 'password123'
 INSERT INTO users (username, email, password_hash, display_name, bio, role, profile_picture_url) VALUES 
-('user1', 'user1@example.com', '$2a$10$BnuLUiy1w73sm6BmUzlGq.i..db4KIvpnKXylG/bZ1S3a/I.5ITua', 'Chef One', 'Master of the high seas and tinned fish.', 'USER', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRecT6HAfwB-DWQ_3c1n4cLtBdNE0dzVqfiooFwq_0OCQ&s'),
-('user2', 'user2@example.com', '$2a$10$P6GC6ycqzWAr9v6nmy7NaewiakET0qNG4dWutdTVFRj0KUeVJTX.a', 'Gourmet Gal', 'Looking for the perfect smoked trout.', 'USER', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400');
+('user1', 'user1@example.com', '$2a$10$BnuLUiy1w73sm6BmUzlGq.i..db4KIvpnKXylG/bZ1S3a/I.5ITua', 'Chef Nolan', 'Specializing in high-performance recipes.', 'USER', 'https://cdn-icons-png.flaticon.com/512/1154/1154444.png'),
+('user2', 'user2@example.com', '$2a$10$P6GC6ycqzWAr9v6nmy7NaewiakET0qNG4dWutdTVFRj0KUeVJTX.a', 'Chef Alex', 'Traditional heritage cooking enthusiast.', 'USER', 'https://cdn-icons-png.flaticon.com/512/1154/1154460.png');
 
-INSERT INTO recipes (title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id) VALUES 
-('Smoked Trout Toast', 'Crispy sourdough topped with premium smoked trout, creme fraiche, and fresh dill.', 10, 5, 2, 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800', true, 'Breakfast, Seafood', 1),
-('Spicy Sardine Pasta', 'A quick pantry staple featuring olive oil sardines, red pepper flakes, and lemon.', 5, 12, 1, 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=800', true, 'Lunch, Spicy', 1),
-('Lemon Garlic Mackerel', 'Mediterranean style mackerel fillets served over a bed of seasonal greens.', 15, 0, 1, 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800', true, 'Healthy, Salad', 2);
+-- 4 Original Recipes
+INSERT INTO recipes (id, title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id) VALUES 
+(1, 'Classic Lasagna', 'Layers of beef, cheese, and pasta.', 30, 60, 8, 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800', true, 'Dinner, Italian', 1),
+(2, 'Midnight Ramen', 'Quick noodles for late night sessions.', 5, 10, 1, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', true, 'Fast, Asian', 2),
+(3, 'Tinned Fish Toast', 'Artisanal sardines on sourdough.', 5, 5, 1, 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800', true, 'Seafood, Lunch', 1),
+(4, 'Greek Salad', 'Fresh cucumber, olives, and feta.', 15, 0, 2, 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800', true, 'Healthy, Salad', 2);
 
+-- 1 Forked Recipe: User 2 forks Nolan's Lasagna and adds Spicy tags
+INSERT INTO recipes (id, title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id, forked_from_recipe_id, original_author_id) VALUES 
+(5, 'Spicy Lasagna', 'Nolan''s classic Lasagna with a spicy chili kick.', 30, 65, 8, 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800', true, 'Dinner, Italian, Spicy', 2, 1, 1);
+
+-- Reset sequences
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
+
+-- Ingredients for Original 1
 INSERT INTO ingredients (recipe_id, name, quantity, unit, order_index) VALUES 
-(1, 'Smoked Trout', '1', 'can', 0),
-(1, 'Sourdough Bread', '2', 'slices', 1),
-(1, 'Creme Fraiche', '2', 'tbsp', 2),
-(2, 'Sardines in Oil', '1', 'can', 0),
-(2, 'Spaghetti', '100', 'g', 1);
+(1, 'Beef', '1', 'lb', 0), (1, 'Pasta Sheets', '12', 'sheets', 1), (1, 'Mozzarella', '2', 'cups', 2);
+-- Ingredients for Fork 5
+INSERT INTO ingredients (recipe_id, name, quantity, unit, order_index) VALUES 
+(5, 'Beef', '1', 'lb', 0), (5, 'Pasta Sheets', '12', 'sheets', 1), (5, 'Mozzarella', '2', 'cups', 2), (5, 'Red Chili Flakes', '3', 'tbsp', 3);
 
+-- Steps
 INSERT INTO steps (recipe_id, instruction, step_number) VALUES 
-(1, 'Toast the sourdough until golden and crisp.', 1),
-(1, 'Spread a thick layer of creme fraiche.', 2),
-(1, 'Top with flaked trout and fresh dill.', 3),
-(2, 'Boil pasta in salted water.', 1),
-(2, 'Sauté sardines with garlic and chili flakes.', 2);
+(1, 'Prepare the meat sauce.', 1), (1, 'Layer pasta and cheese.', 2), (1, 'Bake at 375F.', 3),
+(5, 'Prepare the meat sauce with extra chili.', 1), (5, 'Layer pasta and cheese.', 2), (5, 'Bake at 375F for 5 mins longer.', 3);
 
-INSERT INTO collections (user_id, name, description, order_index) VALUES 
-(1, 'Summer Pantry', 'Light and refreshing tinned fish favorites.', 0);
+-- Collections
+INSERT INTO collections (id, user_id, name, description, order_index) VALUES 
+(1, 1, 'Quick Bites', 'Recipes that take less than 15 minutes.', 0),
+(2, 2, 'Weekend Dinner', 'Heavy meals for the family.', 0);
+
+-- Recipes in Collections
+-- Nolan's Quick Bites: Ramen(2), Fish Toast(3), Salad(4) (3 recipes)
+INSERT INTO collection_recipes (collection_id, recipe_id) VALUES (1, 2), (1, 3), (1, 4);
+-- Alex's Weekend Dinner: Classic Lasagna(1), Spicy Lasagna(5) (2 recipes)
+INSERT INTO collection_recipes (collection_id, recipe_id) VALUES (2, 1), (2, 5);
+
+-- Final Stash entries so they show up for the users
+INSERT INTO saved_recipes (user_id, recipe_id, original_author_id) VALUES (1, 2, 2), (1, 3, 1), (1, 4, 2);
+INSERT INTO saved_recipes (user_id, recipe_id, original_author_id) VALUES (2, 1, 1), (2, 5, 2);
