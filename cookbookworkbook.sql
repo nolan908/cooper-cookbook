@@ -19,7 +19,7 @@ CREATE TABLE recipes (
     prep_time INT,
     cook_time INT,
     servings INT,
-    image_url VARCHAR(500),
+    image_url TEXT,
     is_public BOOLEAN DEFAULT true,
     category_tags VARCHAR(255),
     author_id INT REFERENCES users(id) ON DELETE CASCADE,
