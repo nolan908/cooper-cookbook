@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getRecipeById, updateRecipe } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import type { Ingredient, Step } from "../api/types";
+import ImagePicker from "../components/ImagePicker";
+import TagInput from "../components/TagInput";
 
 export default function EditRecipePage() {
   const { id } = useParams<{ id: string }>();
@@ -153,8 +155,10 @@ export default function EditRecipePage() {
               <label className="block text-sm font-medium text-slate-700 mb-1">Prep Time (min)</label>
               <input
                 type="number"
+                min="0"
+                max="10000"
                 value={form.prepTime}
-                onChange={(e) => update("prepTime", parseInt(e.target.value) || 0)}
+                onChange={(e) => update("prepTime", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -162,8 +166,10 @@ export default function EditRecipePage() {
               <label className="block text-sm font-medium text-slate-700 mb-1">Cook Time (min)</label>
               <input
                 type="number"
+                min="0"
+                max="10000"
                 value={form.cookTime}
-                onChange={(e) => update("cookTime", parseInt(e.target.value) || 0)}
+                onChange={(e) => update("cookTime", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -171,8 +177,10 @@ export default function EditRecipePage() {
               <label className="block text-sm font-medium text-slate-700 mb-1">Servings</label>
               <input
                 type="number"
+                min="0"
+                max="1000"
                 value={form.servings}
-                onChange={(e) => update("servings", parseInt(e.target.value) || 0)}
+                onChange={(e) => update("servings", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -273,26 +281,18 @@ export default function EditRecipePage() {
         {/* Extra Settings */}
         <section className="space-y-4 pt-4 border-t">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Image URL</label>
-              <input
-                type="url"
-                value={form.imageUrl}
-                onChange={(e) => update("imageUrl", e.target.value)}
-                className="w-full border border-slate-300 rounded px-3 py-2 text-sm"
-                placeholder="https://..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Category Tags</label>
-              <input
-                type="text"
-                value={form.categoryTags}
-                onChange={(e) => update("categoryTags", e.target.value)}
-                className="w-full border border-slate-300 rounded px-3 py-2 text-sm"
-                placeholder="Dinner, Pasta, Spicy..."
-              />
-            </div>
+            <ImagePicker
+              label="Visual Documentation"
+              value={form.imageUrl}
+              onChange={(val) => update("imageUrl", val)}
+              type="recipe"
+            />
+            <TagInput
+              label="Category Tags"
+              value={form.categoryTags}
+              onChange={(val) => update("categoryTags", val)}
+              placeholder="e.g. Dinner, Pasta, Spicy..."
+            />
           </div>
 
           <div className="flex items-center gap-2">

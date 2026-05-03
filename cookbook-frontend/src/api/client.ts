@@ -23,6 +23,9 @@ api.interceptors.request.use((config) => {
 });
 
 // Auth
+export const validateStep1 = (data: { username: string; email: string }) =>
+  api.post<string>("/auth/validate-step1", data);
+
 export const register = (data: RegisterData) =>
   api.post<string>("/auth/register", data);
 

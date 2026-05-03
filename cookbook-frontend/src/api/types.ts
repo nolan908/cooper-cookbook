@@ -8,6 +8,22 @@ export interface User {
   role: string;
 }
 
+export interface Ingredient {
+  id?: number;
+  recipeId?: number;
+  name: string;
+  quantity: string;
+  unit: string;
+  orderIndex: number;
+}
+
+export interface Step {
+  id?: number;
+  recipeId?: number;
+  instruction: string;
+  stepNumber: number;
+}
+
 export interface Recipe {
   id: number;
   title: string;
@@ -23,6 +39,7 @@ export interface Recipe {
   authorProfilePictureUrl?: string;
   forkedFromRecipeId?: number;
   forkedFromRecipeTitle?: string;
+  forkedFromRecipeIsPublic?: boolean;
   originalAuthorId?: number;
   originalAuthorDisplayName?: string;
   ingredients?: Ingredient[];
@@ -43,6 +60,7 @@ export interface SavedRecipe {
   userId: number;
   recipeId: number;
   originalAuthorId: number;
+  savedAt?: string;
 }
 
 export interface LoginCredentials {
@@ -59,18 +77,6 @@ export interface RegisterData {
   profilePictureUrl: string;
 }
 
-export interface Ingredient {
-  id?: number;
-  recipeId?: number;
-  name: string;
-  quantity: string;
-  unit: string;
-  orderIndex: number;
-}
-
-export interface Step {
-  id?: number;
-  recipeId?: number;
-  instruction: string;
-  stepNumber: number;
+export interface AuthResponse {
+  token: string;
 }
