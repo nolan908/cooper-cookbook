@@ -29,6 +29,8 @@ properties:
             value: postgres
           - name: SPRING_DATASOURCE_PASSWORD
             value: password123
+          - name: FRONTEND_URL
+            value: http://coopercookbook.eastus.azurecontainer.io
         resources:
           requests:
             cpu: 1
@@ -58,6 +60,6 @@ properties:
   imageRegistryCredentials:
     - server: cookbook.azurecr.io
       username: cookbook
-      password: AYEos3Ia4M6xjcevSbVpevgAOk1n8a8noh7BySgDj3fUEn8pgEasJQQJ99CDACYeBjFEqg7NAAACAZCR18SZ
+      password: ZF4FpfiSFlMwVVEkiPHj7ncCBAVjvZlmgo6t1C5Zohy4p8ype18XJQQJ99CEACYeBjFEqg7NAAACAZCR5RMX
 tags: {project: coopercookbook}
 type: Microsoft.ContainerInstance/containerGroups
