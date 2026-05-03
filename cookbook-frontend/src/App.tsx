@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
+import LandingPage from "./pages/LandingPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import MyRecipesPage from "./pages/MyRecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
@@ -19,16 +20,17 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-fw-cream">
           <Navbar />
-          <main className="max-w-6xl mx-auto px-4 py-8">
+          <main className="py-8">
             <Routes>
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route
-                path="/"
+                path="/browse"
                 element={
                   <ProtectedRoute>
                     <DashboardPage />

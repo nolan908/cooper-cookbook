@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register, login } from "../api/client";
+import { register, login, validateStep1 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import ImagePicker from "../components/ImagePicker";
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
@@ -21,20 +22,29 @@ export default function RegisterPage() {
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const nextStep = (e: React.FormEvent) => {
+  const nextStep = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.username || !form.email || !form.password) {
       setError("Please fill in all fields.");
       return;
     }
     setError("");
-    setStep(2);
+    setLoading(true);
+    try {
+      await validateStep1({ username: form.username, email: form.email });
+      setStep(2);
+    } catch (err: any) {
+      setError(err.response?.data || "Validation failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+    const finalAvatar = form.profilePictureUrl || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg";
     try {
       await register({
         username: form.username,
@@ -42,13 +52,13 @@ export default function RegisterPage() {
         password: form.password,
         displayName: form.displayName || form.username,
         bio: form.bio,
-        profilePictureUrl: form.profilePictureUrl,
+        profilePictureUrl: finalAvatar,
       });
 
       // Auto-login after successful registration
       const loginRes = await login({ username: form.username, password: form.password });
       setToken(loginRes.token);
-      navigate("/");
+      navigate("/browse");
     } catch {
       setError("Registration failed — username or email may already be taken");
     } finally {
@@ -104,29 +114,20 @@ export default function RegisterPage() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded font-medium transition"
+                disabled={loading}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
               >
-                Next Step
+                {loading ? "Validating..." : "Next Step"}
               </button>
             </>
           ) : (
             <>
-              <div className="flex flex-col items-center mb-4">
-                <div className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden mb-2">
-                  {form.profilePictureUrl ? (
-                    <img src={form.profilePictureUrl} alt="Preview" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-slate-400 text-xs text-center px-2">No Image</span>
-                  )}
-                </div>
-                <input
-                  type="url"
-                  placeholder="Profile Picture URL"
-                  value={form.profilePictureUrl}
-                  onChange={(e) => update("profilePictureUrl", e.target.value)}
-                  className="w-full border border-slate-300 rounded px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
+              <ImagePicker
+                label="Profile Identity"
+                value={form.profilePictureUrl}
+                onChange={(val) => update("profilePictureUrl", val)}
+                type="pfp"
+              />
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Display Name</label>
                 <input

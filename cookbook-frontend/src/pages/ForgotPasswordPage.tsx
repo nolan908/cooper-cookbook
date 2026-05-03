@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../api/client";
 
@@ -6,14 +6,25 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldown > 0) return;
+
     setLoading(true);
     setMessage({ type: "", text: "" });
     try {
       const res = await forgotPassword(email);
-      setMessage({ type: "success", text: res.data });
+      setMessage({ type: "success", text: res.data + " Please check your inbox (and spam folder)." });
+      setCooldown(60); // 60 second cooldown
     } catch (err: any) {
       setMessage({ type: "error", text: err.response?.data || "Failed to send reset link." });
     } finally {
@@ -47,15 +58,16 @@ export default function ForgotPasswordPage() {
               className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               required
               placeholder="nolan@example.com"
+              disabled={loading || cooldown > 0}
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || cooldown > 0}
             className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded font-medium transition disabled:opacity-50"
           >
-            {loading ? "Sending..." : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown > 0 ? `Resend in ${cooldown}s` : "Send Reset Link"}
           </button>
 
           <p className="text-sm text-center text-slate-500">

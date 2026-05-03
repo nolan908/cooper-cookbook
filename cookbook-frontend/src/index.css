@@ -1,58 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --color-fw-cream: #fffbf2;
-  --color-fw-salmon: #ff7051;
-  --color-fw-teal: #006b5d;
-  --color-fw-navy: #0e1b2b;
-  --color-fw-yellow: #ffc93c;
-  --color-fw-pink: #ffb8d1;
-  
-  --shadow-fw: 4px 4px 0px 0px rgba(14, 27, 43, 0.05);
-  --shadow-fw-hover: 2px 2px 0px 0px rgba(14, 27, 43, 0.05);
-}
+ --color-fw-cream: #fcfaf5;
+ --color-fw-salmon: #ff3800;
+ --color-fw-teal: #0a3d31;
+ --color-fw-navy: #111111;
+ --color-fw-yellow: #e6b800;
+ --color-fw-pink: #f4a6b3;
+ 
+ --shadow-fw: 4px 4px 0px 0px rgba(17, 17, 17, 0.05);
+ --shadow-fw-hover: 2px 2px 0px 0px rgba(17, 17, 17, 0.05);
 
-@layer base {
-  body {
-    @apply bg-fw-cream text-fw-navy font-sans antialiased selection:bg-fw-yellow;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-black tracking-tight italic;
-    font-family: var(--font-funky);
-  }
+ --font-funky: "Playfair Display", serif;
+ --font-script: "Kalam", cursive;
+ --font-logo: "Finger Paint", cursive;
+ --font-crayon: "Finger Paint", cursive;
+ }@layer base {
+ body {
+ @apply bg-fw-cream text-fw-navy font-sans antialiased selection:bg-fw-yellow;
+ }
+ 
+ h1, h2, h3, h4, h5, h6 {
+ @apply font-black tracking-tighter italic;
+ font-family: var(--font-funky);
+ }
 
-  /* Hide scrollbars but keep functionality */
-  * {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
-  }
-  *::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari, Opera */
-  }
+ /* Hide scrollbars but keep functionality */
+ * {
+ -ms-overflow-style: none; /* IE and Edge */
+ scrollbar-width: none; /* Firefox */
+ }
+ *::-webkit-scrollbar {
+ display: none; /* Chrome, Safari, Opera */
+ }
 }
 
 .fw-card {
-  @apply bg-white border border-fw-navy/10 shadow-sm transition-all duration-300 overflow-hidden;
+ @apply bg-white border border-fw-navy/10 shadow-sm transition-all duration-300 overflow-hidden;
 }
 
 .fw-card:hover {
-  @apply shadow-md translate-y-[-2px];
+ @apply shadow-md translate-y-[-2px];
 }
 
 /* Thinner borders for a cleaner look */
 .fw-btn-primary {
-  @apply bg-fw-salmon text-white border-2 border-fw-navy/20 shadow-sm font-black uppercase tracking-widest text-[11px] px-8 py-4 transition-all duration-200 active:scale-95;
+ @apply bg-fw-salmon text-white border-2 border-fw-navy/20 shadow-sm font-black tracking-widest text-[11px] px-8 py-4 transition-all duration-200 active:scale-95;
 }
 
 .fw-btn-primary:hover {
-  background-color: #ff5a36; /* Manually darken the salmon color for hover */
+ background-color: #e63200; /* Darker neon red/orange for hover */
 }
 
 .fw-btn-secondary {
-  @apply bg-fw-yellow text-fw-navy border-2 border-fw-navy/20 shadow-sm font-black uppercase tracking-widest text-[11px] px-8 py-4 transition-all duration-200 active:scale-95;
+ @apply bg-fw-yellow text-fw-navy border-2 border-fw-navy/20 shadow-sm font-black tracking-widest text-[11px] px-8 py-4 transition-all duration-200 active:scale-95;
 }
 
 .fw-btn-secondary:hover {
-  @apply bg-white;
+ @apply bg-white;
 }

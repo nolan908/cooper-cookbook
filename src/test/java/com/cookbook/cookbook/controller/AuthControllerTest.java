@@ -6,6 +6,7 @@ import com.cookbook.cookbook.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -109,5 +110,43 @@ class AuthControllerTest {
 
         assertEquals(400, response.getStatusCode().value());
         assertEquals("Invalid password", response.getBody());
+    }
+
+    @Test
+    @DisplayName("Validate Step 1 - Success")
+    void testValidateStep1Success() {
+        Map<String, String> body = Map.of("username", "new", "email", "new@test.com");
+        when(userRepository.findByUsername("new")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("new@test.com")).thenReturn(Optional.empty());
+
+        ResponseEntity<String> response = authController.validateStep1(body);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Valid", response.getBody());
+    }
+
+    @Test
+    @DisplayName("Validate Step 1 - Username Taken")
+    void testValidateStep1UsernameTaken() {
+        Map<String, String> body = Map.of("username", "taken", "email", "new@test.com");
+        when(userRepository.findByUsername("taken")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<String> response = authController.validateStep1(body);
+
+        assertEquals(400, response.getStatusCode().value());
+        assertEquals("Username already taken", response.getBody());
+    }
+
+    @Test
+    @DisplayName("Validate Step 1 - Email Taken")
+    void testValidateStep1EmailTaken() {
+        Map<String, String> body = Map.of("username", "new", "email", "taken@test.com");
+        when(userRepository.findByUsername("new")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("taken@test.com")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<String> response = authController.validateStep1(body);
+
+        assertEquals(400, response.getStatusCode().value());
+        assertEquals("Email already taken", response.getBody());
     }
 }

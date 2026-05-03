@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1777768373460" clover="3.2.0">
+  <project timestamp="1777768373460" name="All files">
+    <metrics statements="28" coveredstatements="23" conditionals="41" coveredconditionals="28" methods="12" coveredmethods="8" elements="81" coveredelements="59" complexity="0" loc="28" ncloc="28" packages="2" files="4" classes="4"/>
+    <package name="api">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="types.ts" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/api/types.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="components">
+      <metrics statements="28" coveredstatements="23" conditionals="41" coveredconditionals="28" methods="12" coveredmethods="8"/>
+      <file name="Navbar.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/Navbar.tsx">
+        <metrics statements="7" coveredstatements="5" conditionals="8" coveredconditionals="4" methods="2" coveredmethods="1"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+      </file>
+      <file name="RecipeCard.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/RecipeCard.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="18" coveredconditionals="10" methods="1" coveredmethods="1"/>
+        <line num="12" count="2" type="stmt"/>
+      </file>
+      <file name="TagInput.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/TagInput.tsx">
+        <metrics statements="20" coveredstatements="17" conditionals="15" coveredconditionals="14" methods="9" coveredmethods="6"/>
+        <line num="11" count="11" type="stmt"/>
+        <line num="14" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="11" type="stmt"/>
+        <line num="17" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="20" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="25" count="1" type="cond" truecount="4" falsecount="1"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="31" count="11" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="11" type="stmt"/>
+        <line num="41" count="6" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

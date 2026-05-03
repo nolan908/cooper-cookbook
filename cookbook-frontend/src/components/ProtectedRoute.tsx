@@ -4,6 +4,6 @@ import type { ReactNode } from "react";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isLoggedIn } = useAuth();
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  if (!isLoggedIn) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
