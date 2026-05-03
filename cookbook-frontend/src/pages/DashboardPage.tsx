@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getPublicRecipes, saveRecipe, getSavedRecipesByUser } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import RecipeCard from "../components/RecipeCard";
-import { Link, useNavigate } from "react-router-dom";
 import type { Recipe } from "../api/types";
 
 export default function DashboardPage() {
@@ -10,10 +9,9 @@ export default function DashboardPage() {
   const [filtered, setFiltered] = useState<Recipe[]>([]);
   const [stashedIds, setStashedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [savedMsg, setSavedMsg] = useState<number | null>(null);
+  const [_savedMsg, setSavedMsg] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const { isLoggedIn, userId } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoggedIn) return;

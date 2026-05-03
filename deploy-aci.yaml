@@ -1,0 +1,63 @@
+apiVersion: 2019-12-01
+location: eastus
+name: Cookbook
+properties:
+  containers:
+    - name: db
+      properties:
+        image: cookbook.azurecr.io/postgres:latest
+        environmentVariables:
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            value: password123
+          - name: POSTGRES_DB
+            value: cookbook_db
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+        ports:
+          - port: 5432
+    - name: springboot-app
+      properties:
+        image: cookbook.azurecr.io/springboot-app:latest
+        environmentVariables:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://localhost:5432/cookbook_db
+          - name: SPRING_DATASOURCE_USERNAME
+            value: postgres
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: password123
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+        ports:
+          - port: 8080
+    - name: ui
+      properties:
+        image: cookbook.azurecr.io/cookbook-ui:latest
+        resources:
+          requests:
+            cpu: 1
+            memoryInGb: 1.5
+        ports:
+          - port: 80
+  osType: Linux
+  ipAddress:
+    type: Public
+    dnsNameLabel: coopercookbook
+    ports:
+      - protocol: tcp
+        port: 80
+      - protocol: tcp
+        port: 8080
+      - protocol: tcp
+        port: 5432
+  imageRegistryCredentials:
+    - server: cookbook.azurecr.io
+      username: cookbook
+      password: AYEos3Ia4M6xjcevSbVpevgAOk1n8a8noh7BySgDj3fUEn8pgEasJQQJ99CDACYeBjFEqg7NAAACAZCR18SZ
+tags: {project: coopercookbook}
+type: Microsoft.ContainerInstance/containerGroups

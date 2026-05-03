@@ -25,6 +25,8 @@ export interface Recipe {
   forkedFromRecipeTitle?: string;
   originalAuthorId?: number;
   originalAuthorDisplayName?: string;
+  ingredients?: Ingredient[];
+  steps?: Step[];
 }
 
 export interface Collection {
@@ -55,4 +57,20 @@ export interface RegisterData {
   displayName: string;
   bio: string;
   profilePictureUrl: string;
+}
+
+export interface Ingredient {
+  id?: number;
+  recipeId?: number;
+  name: string;
+  quantity: string;
+  unit: string;
+  orderIndex: number;
+}
+
+export interface Step {
+  id?: number;
+  recipeId?: number;
+  instruction: string;
+  stepNumber: number;
 }
