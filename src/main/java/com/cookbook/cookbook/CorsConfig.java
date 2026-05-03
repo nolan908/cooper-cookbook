@@ -16,20 +16,21 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         String frontendUrl = System.getenv("FRONTEND_URL");
+        List<String> allowedOrigins = new java.util.ArrayList<>(List.of(
+            "http://localhost:5173", 
+            "http://localhost:3000",
+            "http://localhost:80"
+        ));
+        
         if (frontendUrl != null && !frontendUrl.isEmpty()) {
-            config.setAllowedOrigins(List.of(
-                "http://localhost:5173", 
-                "http://localhost:3000",
-                frontendUrl,
-                "https://" + frontendUrl
-            ));
-        } else {
-            config.setAllowedOrigins(List.of(
-                "http://localhost:5173", 
-                "http://localhost:3000",
-                "https://frontend-ui.ambitiousbay-6405551a.centralus.azurecontainerapps.io"
-            ));
+            allowedOrigins.add(frontendUrl);
+            if (!frontendUrl.startsWith("http")) {
+                allowedOrigins.add("https://" + frontendUrl);
+                allowedOrigins.add("http://" + frontendUrl);
+            }
         }
+        
+        config.setAllowedOrigins(allowedOrigins);
         
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

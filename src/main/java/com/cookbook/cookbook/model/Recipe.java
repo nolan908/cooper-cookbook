@@ -18,6 +18,7 @@ public class Recipe {
     private String authorProfilePictureUrl;
     private Long forkedFromRecipeId;
     private String forkedFromRecipeTitle;
+    private Boolean forkedFromRecipeIsPublic;
     private Long originalAuthorId;
     private String originalAuthorDisplayName;
     private List<Ingredient> ingredients = new ArrayList<>();
@@ -75,6 +76,14 @@ public class Recipe {
 
     public void setForkedFromRecipeTitle(String forkedFromRecipeTitle) {
         this.forkedFromRecipeTitle = forkedFromRecipeTitle;
+    }
+
+    public Boolean getForkedFromRecipeIsPublic() {
+        return forkedFromRecipeIsPublic;
+    }
+
+    public void setForkedFromRecipeIsPublic(Boolean forkedFromRecipeIsPublic) {
+        this.forkedFromRecipeIsPublic = forkedFromRecipeIsPublic;
     }
 
     public Long getOriginalAuthorId() {

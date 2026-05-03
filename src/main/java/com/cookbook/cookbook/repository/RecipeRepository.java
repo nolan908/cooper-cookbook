@@ -3,9 +3,13 @@ package com.cookbook.cookbook.repository;
 import com.cookbook.cookbook.model.Recipe;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -40,6 +44,9 @@ public class RecipeRepository {
         try {
             recipe.setForkedFromRecipeTitle(rs.getString("forked_from_title"));
             recipe.setOriginalAuthorDisplayName(rs.getString("original_author_name"));
+            
+            boolean forkedPublic = rs.getBoolean("forked_from_is_public");
+            recipe.setForkedFromRecipeIsPublic(rs.wasNull() ? null : forkedPublic);
         } catch (Exception ignored) {}
 
         long forkedId = rs.getLong("forked_from_recipe_id");
@@ -53,7 +60,7 @@ public class RecipeRepository {
 
     private final String BASE_SELECT = 
         "SELECT r.*, u.display_name, u.profile_picture_url, " +
-        "orig.title as forked_from_title, ou.display_name as original_author_name " +
+        "orig.title as forked_from_title, orig.is_public as forked_from_is_public, ou.display_name as original_author_name " +
         "FROM recipes r " +
         "LEFT JOIN users u ON r.author_id = u.id " +
         "LEFT JOIN recipes orig ON r.forked_from_recipe_id = orig.id " +
@@ -86,22 +93,36 @@ public class RecipeRepository {
     }
 
     public Long saveAndReturnId(Recipe recipe) {
-        return jdbcTemplate.queryForObject(
-                "INSERT INTO recipes (title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id, forked_from_recipe_id, original_author_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
-                Long.class,
-                recipe.getTitle(),
-                recipe.getDescription(),
-                recipe.getPrepTime(),
-                recipe.getCookTime(),
-                recipe.getServings(),
-                recipe.getImageUrl(),
-                recipe.getIsPublic(),
-                recipe.getCategoryTags(),
-                recipe.getAuthorId(),
-                recipe.getForkedFromRecipeId(),
-                recipe.getOriginalAuthorId()
-        );
+        String sql = "INSERT INTO recipes (title, description, prep_time, cook_time, servings, image_url, is_public, category_tags, author_id, forked_from_recipe_id, original_author_id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, recipe.getTitle());
+            ps.setString(2, recipe.getDescription());
+            ps.setObject(3, recipe.getPrepTime());
+            ps.setObject(4, recipe.getCookTime());
+            ps.setObject(5, recipe.getServings());
+            ps.setString(6, recipe.getImageUrl());
+            ps.setBoolean(7, recipe.getIsPublic() != null ? recipe.getIsPublic() : true);
+            ps.setString(8, recipe.getCategoryTags());
+            ps.setObject(9, recipe.getAuthorId());
+            ps.setObject(10, recipe.getForkedFromRecipeId());
+            ps.setObject(11, recipe.getOriginalAuthorId());
+            return ps;
+        }, keyHolder);
+        
+        Map<String, Object> keys = keyHolder.getKeys();
+        if (keys == null || keys.isEmpty()) return null;
+        
+        // H2 might return uppercase ID
+        Object id = keys.get("id");
+        if (id == null) id = keys.get("ID");
+        
+        if (id instanceof Number) return ((Number) id).longValue();
+        return null;
     }
 
     public void update(Recipe recipe) {

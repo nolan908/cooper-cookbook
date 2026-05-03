@@ -27,6 +27,20 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    @PostMapping("/validate-step1")
+    public ResponseEntity<String> validateStep1(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
+        String email = body.get("email");
+
+        if (username != null && userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.badRequest().body("Username already taken");
+        }
+        if (email != null && userRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already taken");
+        }
+        return ResponseEntity.ok("Valid");
+    }
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Map<String, String> body) {
         logger.info("Registration attempt for username: {}", body.get("username"));
