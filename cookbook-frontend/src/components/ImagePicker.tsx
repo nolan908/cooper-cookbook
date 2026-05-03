@@ -7,6 +7,7 @@ interface ImagePickerProps {
   onChange: (value: string) => void;
   label?: string;
   type?: ImagePickerType;
+  hidePreview?: boolean;
 }
 
 const STOCK_PFP_IMAGES = [
@@ -31,7 +32,7 @@ const STOCK_RECIPE_IMAGES = [
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop", // Steak
 ];
 
-export default function ImagePicker({ value, onChange, label, type = "recipe" }: ImagePickerProps) {
+export default function ImagePicker({ value, onChange, label, type = "recipe", hidePreview = false }: ImagePickerProps) {
   const [mode, setMode] = useState<"url" | "file" | "stock">("url");
   const [imgError, setImgError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -130,26 +131,27 @@ export default function ImagePicker({ value, onChange, label, type = "recipe" }:
         )}
       </div>
 
-      <div className="flex items-center justify-center pt-2">
-         <div className="w-20 h-20 rounded-xl border-2 border-fw-navy overflow-hidden bg-fw-navy/5 flex items-center justify-center relative">
-            {value && !imgError ? (
-              <img 
-                src={value} 
-                alt="Preview" 
-                className="w-full h-full object-cover" 
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-fw-navy/5">
+      {!hidePreview && (
+        <div className="flex items-center justify-center pt-2">
+          <div className="w-20 h-20 rounded-xl border-2 border-fw-navy overflow-hidden bg-fw-navy/5 flex items-center justify-center relative">
+              {value && !imgError ? (
                 <img 
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlwNmyJqapbAylLT0BOQoFROVT9j1ypHgExw&s" 
-                  alt="Chef Hat" 
-                  className="w-12 h-12 object-contain mix-blend-multiply opacity-20" 
+                  src={value} 
+                  alt="Preview" 
+                  className="w-full h-full object-cover" 
+                  onError={() => setImgError(true)}
                 />
-              </div>
-            )}
-         </div>
-      </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-fw-navy/5 text-fw-navy/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+              )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

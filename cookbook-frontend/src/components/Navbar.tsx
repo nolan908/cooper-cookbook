@@ -13,7 +13,7 @@ if (!isLoggedIn) return null;
 
 return (
 <nav className="bg-fw-teal text-white border-b-2 border-fw-navy sticky top-0 z-50"> <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
- <div className="flex items-center gap-3 shrink-0 whitespace-nowrap text-fw-yellow" style={{ fontFamily: 'var(--font-logo)' }}>
+ <Link to="/browse" className="flex items-center gap-3 shrink-0 whitespace-nowrap text-fw-yellow hover:opacity-80 transition-opacity active:scale-95" style={{ fontFamily: 'var(--font-logo)' }}>
  <div className="w-10 h-10 flex items-center justify-center">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
  <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
@@ -21,7 +21,7 @@ return (
  </svg>
  </div>
  <span className="text-3xl tracking-tight">Cooper Cookbook</span>
- </div>
+ </Link>
 
  {isLoggedIn ? (
  <div className="flex items-center gap-6 text-[11px] font-black tracking-[0.2em] whitespace-nowrap overflow-x-auto no-scrollbar uppercase">
@@ -37,15 +37,15 @@ return (
  {profilePictureUrl ? (
  <img src={profilePictureUrl} alt={username || "User"} className="w-full h-full object-cover"/>
  ) : (
- <div className="w-full h-full flex items-center justify-center bg-fw-yellow p-1">
- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-fw-navy">
- <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
- <line x1="6" y1="17" x2="18" y2="17" />
+ <div className="w-full h-full flex items-center justify-center bg-fw-yellow/20 p-1 text-fw-navy/40">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+ <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+ <circle cx="12" cy="7" r="4" />
  </svg>
  </div>
  )}
  </div>
- <span className="group-hover:text-fw-yellow transition-colors italic font-black text-xs">{username}</span>
+ <span className="group-hover:text-fw-yellow transition-colors italic font-black text-xs line-clamp-1 max-w-[100px]">{username}</span>
  </Link>
  <button 
  onClick={handleLogout} 

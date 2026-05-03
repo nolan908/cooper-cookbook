@@ -18,15 +18,18 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  alt={recipe.title}
  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
  ) : (
- <div className="w-full h-full bg-fw-pink flex items-center justify-center text-fw-navy/10">
- <svg className="w-20 h-20 opacity-20"fill="currentColor"viewBox="0 0 24 24">
- <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+ <div className="w-full h-full bg-fw-yellow/10 flex items-center justify-center text-fw-navy/20">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16">
+ <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+ <line x1="6" y1="17" x2="18" y2="17" />
  </svg>
  </div>
  )}
- <div className="absolute top-4 left-4 bg-fw-yellow text-fw-navy border-2 border-fw-navy/10 px-3 py-1 text-[10px] font-black tracking-widest rounded-lg z-10 shadow-sm">
- {recipe.categoryTags?.split(',')[0] || 'LIMITED'}
+ {recipe.categoryTags && (
+ <div className="absolute top-4 left-4 bg-fw-yellow text-fw-navy border-2 border-fw-navy/10 px-3 py-1 text-[10px] font-black tracking-widest rounded-lg z-10 shadow-sm uppercase">
+ {recipe.categoryTags.split(',')[0]}
  </div>
+ )}
  </div>
 
  <div className="p-6 flex-1 flex flex-col">
