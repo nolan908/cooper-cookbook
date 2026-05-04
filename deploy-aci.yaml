@@ -31,6 +31,18 @@ properties:
             value: password123
           - name: FRONTEND_URL
             value: http://coopercookbook.eastus.azurecontainer.io
+          - name: SPRING_MAIL_HOST
+            value: smtp.gmail.com
+          - name: SPRING_MAIL_PORT
+            value: "587"
+          - name: SPRING_MAIL_USERNAME
+            value: nolanrgriffith@gmail.com
+          - name: SPRING_MAIL_PASSWORD
+            value: mqnq zdlr urys jjtw
+          - name: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
+            value: "true"
+          - name: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
+            value: "true"
         resources:
           requests:
             cpu: 1
