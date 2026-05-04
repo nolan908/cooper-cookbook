@@ -25,6 +25,14 @@ export default function ProfilePage() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   useEffect(() => {
     if (userId) {
@@ -103,11 +111,12 @@ export default function ProfilePage() {
   };
 
   const handleForgotPassword = async () => {
-    if (!email) return;
+    if (!email || cooldown > 0) return;
     setLoading(true);
     try {
       const res = await forgotPassword(email);
-      setMessage({ type: "success", text: res.data });
+      setMessage({ type: "success", text: res.data + " Please check your inbox." });
+      setCooldown(60);
     } catch {
       setMessage({ type: "error", text: "Reset failed." });
     } finally {
@@ -177,8 +186,9 @@ export default function ProfilePage() {
             <p className="mt-4 text-sm font-bold leading-relaxed text-white">Forgot password?</p>
             <button
               onClick={handleForgotPassword}
-              className="mt-6 w-full bg-white text-fw-teal py-3 rounded-xl text-[10px] font-black tracking-widest transition active:scale-95 shadow-sm" >
-              Request Reset Link
+              disabled={loading || cooldown > 0}
+              className="mt-6 w-full bg-white text-fw-teal py-3 rounded-xl text-[10px] font-black tracking-widest transition active:scale-95 shadow-sm disabled:opacity-50" >
+              {loading ? "Sending..." : cooldown > 0 ? `Resend in ${cooldown}s` : "Request Reset Link"}
             </button>
           </div>
         </div>

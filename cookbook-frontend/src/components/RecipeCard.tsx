@@ -85,7 +85,9 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  </div>
  
  <div className="text-[10px] font-black text-fw-navy/30 tracking-widest">
- {recipe.prepTime && <span>{recipe.prepTime + (recipe.cookTime || 0)} MIN</span>}
+ {((recipe.prepTime || 0) + (recipe.cookTime || 0)) > 0 && (
+   <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)} MIN</span>
+ )}
  </div>
  </div>
 
