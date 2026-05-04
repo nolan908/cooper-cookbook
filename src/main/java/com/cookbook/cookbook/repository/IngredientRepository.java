@@ -21,7 +21,8 @@ public class IngredientRepository {
         ingredient.setId(rs.getLong("id"));
         ingredient.setRecipeId(rs.getLong("recipe_id"));
         ingredient.setName(rs.getString("name"));
-        ingredient.setQuantity(rs.getString("quantity"));
+        ingredient.setQuantity(rs.getDouble("quantity"));
+        if (rs.wasNull()) ingredient.setQuantity(null);
         ingredient.setUnit(rs.getString("unit"));
         ingredient.setOrderIndex(rs.getInt("order_index"));
         return ingredient;

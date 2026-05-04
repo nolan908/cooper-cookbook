@@ -16,10 +16,13 @@ export default function TagInput({ label, value, onChange, placeholder }: TagInp
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const newTag = inputValue.trim();
-      if (newTag && !tags.includes(newTag)) {
-        const newTags = [...tags, newTag];
-        onChange(newTags.join(", "));
+      const newTagsInput = inputValue.split(",").map(t => t.trim()).filter(t => t !== "");
+      if (newTagsInput.length > 0) {
+        const uniqueNewTags = newTagsInput.filter(t => !tags.includes(t));
+        if (uniqueNewTags.length > 0) {
+          const finalNewTags = [...new Set([...tags, ...uniqueNewTags])];
+          onChange(finalNewTags.join(", "));
+        }
         setInputValue("");
       }
     } else if (e.key === "Backspace" && !inputValue && tags.length > 0) {

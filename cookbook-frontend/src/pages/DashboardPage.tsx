@@ -10,11 +10,9 @@ export default function DashboardPage() {
  const [stashedIds, setStashedIds] = useState<Map<number, number>>(new Map());
  const [loading, setLoading] = useState(true);
  const [search, setSearch] = useState("");
- const { isLoggedIn, userId } = useAuth();
+ const { userId } = useAuth();
 
  useEffect(() => {
- if (!isLoggedIn) return;
- 
  const loadData = async () => {
  try {
  const [recRes, savedRes] = await Promise.all([
@@ -36,18 +34,20 @@ export default function DashboardPage() {
  };
 
  loadData();
- }, [isLoggedIn, userId]);
+ }, [userId]);
 
  useEffect(() => {
  const term = search.toLowerCase();
  setFiltered(
- recipes.filter(
- (r) =>
- r.title.toLowerCase().includes(term) ||
- (r.categoryTags || "").toLowerCase().includes(term) ||
- (r.authorDisplayName || "").toLowerCase().includes(term)
- ),
+   recipes.filter(
+     (r) =>
+       r.title.toLowerCase().includes(term) ||
+       (r.description || "").toLowerCase().includes(term) ||
+       (r.categoryTags || "").toLowerCase().includes(term) ||
+       (r.authorDisplayName || "").toLowerCase().includes(term)
+   ),
  );
+
  }, [search, recipes]);
 
  const handleSave = async (recipe: Recipe) => {

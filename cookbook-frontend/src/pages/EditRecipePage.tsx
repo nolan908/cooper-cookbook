@@ -65,11 +65,16 @@ export default function EditRecipePage() {
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const addIngredient = () =>
-    setIngredients([...ingredients, { name: "", quantity: "", unit: "", orderIndex: ingredients.length }]);
+    setIngredients([...ingredients, { name: "", quantity: 0, unit: "", orderIndex: ingredients.length }]);
 
-  const updateIngredient = (index: number, field: string, value: string) => {
+  const updateIngredient = (index: number, field: string, value: string | number) => {
     const next = [...ingredients];
-    (next[index] as any)[field] = value;
+    if (field === "quantity") {
+      const val = typeof value === "string" ? parseFloat(value) : value;
+      (next[index] as any)[field] = isNaN(val) ? 0 : Math.max(0, val);
+    } else {
+      (next[index] as any)[field] = value;
+    }
     setIngredients(next);
   };
 
@@ -105,7 +110,7 @@ export default function EditRecipePage() {
 
       navigate(`/recipe/${id}`);
     } catch {
-      setError("Failed to update recipe");
+      setError("Failed to update recipe. Please refresh the page and try again.");
     } finally {
       setSaving(false);
     }
@@ -135,7 +140,7 @@ export default function EditRecipePage() {
               type="text"
               value={form.title}
               onChange={(e) => update("title", e.target.value)}
-              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 break-words"
               required
             />
           </div>
@@ -146,7 +151,7 @@ export default function EditRecipePage() {
               value={form.description}
               onChange={(e) => update("description", e.target.value)}
               rows={3}
-              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 break-words"
             />
           </div>
 
@@ -204,26 +209,31 @@ export default function EditRecipePage() {
             {ingredients.map((ing, idx) => (
               <div key={idx} className="flex gap-2 items-start">
                 <input
-                  type="text"
+                  type="number"
+                  step="any"
+                  min="0"
                   placeholder="Qty"
-                  value={ing.quantity}
+                  value={ing.quantity || ""}
                   onChange={(e) => updateIngredient(idx, "quantity", e.target.value)}
                   className="w-20 border border-slate-300 rounded px-2 py-1.5 text-sm"
+                  required
                 />
                 <input
                   type="text"
                   placeholder="Unit"
                   value={ing.unit}
                   onChange={(e) => updateIngredient(idx, "unit", e.target.value)}
-                  className="w-24 border border-slate-300 rounded px-2 py-1.5 text-sm"
+                  className="w-24 border border-slate-300 rounded px-2 py-1.5 text-sm break-words"
+                  maxLength={25}
                 />
                 <input
                   type="text"
                   placeholder="Ingredient name"
                   value={ing.name}
                   onChange={(e) => updateIngredient(idx, "name", e.target.value)}
-                  className="flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm"
+                  className="flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm break-words"
                   required
+                  maxLength={70}
                 />
                 <button
                   type="button"
@@ -262,7 +272,7 @@ export default function EditRecipePage() {
                   value={step.instruction}
                   onChange={(e) => updateStep(idx, e.target.value)}
                   rows={2}
-                  className="flex-1 border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="flex-1 border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 break-words"
                   required
                 />
                 <button

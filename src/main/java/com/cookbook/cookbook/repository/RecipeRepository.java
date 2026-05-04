@@ -137,4 +137,12 @@ public class RecipeRepository {
     public void deleteById(Long id) {
         jdbcTemplate.update("DELETE FROM recipes WHERE id = ?", id);
     }
+
+    public boolean existsByTitleAndAuthorId(String title, Long authorId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM recipes WHERE title = ? AND author_id = ?",
+                Integer.class, title, authorId
+        );
+        return count != null && count > 0;
+    }
 }

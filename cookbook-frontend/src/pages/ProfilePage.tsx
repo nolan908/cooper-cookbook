@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getUserById, updateProfile, updateAccount, deleteUser, forgotPassword, verifyPassword } from "../api/client";
+import { useNavigate, Link } from "react-router-dom";
+import { getUserById, updateProfile, updateAccount, deleteUser, verifyPassword } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import ImagePicker from "../components/ImagePicker";
 
@@ -21,9 +21,8 @@ export default function ProfilePage() {
 
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const [verificationInput, setVerificationInput] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [imgError, setImgError] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
@@ -34,6 +33,7 @@ export default function ProfilePage() {
     }
   }, [cooldown]);
 
+
   useEffect(() => {
     if (userId) {
       getUserById(userId).then((res) => {
@@ -42,7 +42,6 @@ export default function ProfilePage() {
           bio: res.data.bio || "",
           profilePictureUrl: res.data.profilePictureUrl || "",
         });
-        setEmail(res.data.email);
       });
     }
   }, [userId]);
@@ -54,7 +53,7 @@ export default function ProfilePage() {
     setImgError(false);
     const finalForm = {
       ...profileForm,
-      profilePictureUrl: profileForm.profilePictureUrl || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+      profilePictureUrl: profileForm.profilePictureUrl || ""
     };
     try {
       await updateProfile(userId, finalForm);
@@ -110,20 +109,6 @@ export default function ProfilePage() {
     }
   };
 
-  const handleForgotPassword = async () => {
-    if (!email || cooldown > 0) return;
-    setLoading(true);
-    try {
-      const res = await forgotPassword(email);
-      setMessage({ type: "success", text: res.data + " Please check your inbox." });
-      setCooldown(60);
-    } catch {
-      setMessage({ type: "error", text: "Reset failed." });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDeleteAccount = async () => {
     if (!userId) return;
     if (!window.confirm("Are you SURE you want to delete your account? This cannot be undone.")) return;
@@ -171,7 +156,7 @@ export default function ProfilePage() {
               {profileForm.displayName || "Unknown Chef"}
             </h2>
             <p className="text-fw-navy/40 font-bold text-[10px] tracking-widest mt-3">Culinary Artist</p>
-            <p className="text-fw-navy/60 text-sm mt-6 italic font-serif leading-relaxed px-2">
+            <p className="text-fw-navy/60 text-sm mt-6 italic font-serif leading-relaxed px-2 break-words overflow-hidden w-full">
               {profileForm.bio || "No bio yet. Tell us about your kitchen adventures!"}
             </p>
           </div>
@@ -184,12 +169,12 @@ export default function ProfilePage() {
             </div>
             <h3 className="font-black text-[10px] tracking-widest text-white/50">Recovery</h3>
             <p className="mt-4 text-sm font-bold leading-relaxed text-white">Forgot password?</p>
-            <button
-              onClick={handleForgotPassword}
-              disabled={loading || cooldown > 0}
-              className="mt-6 w-full bg-white text-fw-teal py-3 rounded-xl text-[10px] font-black tracking-widest transition active:scale-95 shadow-sm disabled:opacity-50" >
-              {loading ? "Sending..." : cooldown > 0 ? `Resend in ${cooldown}s` : "Request Reset Link"}
-            </button>
+            <Link
+              to="/forgot-password"
+              className="mt-6 w-full bg-white text-fw-teal py-3 rounded-xl text-[10px] font-black tracking-widest transition active:scale-95 shadow-sm inline-block text-center"
+            >
+              Request Reset Link
+            </Link>
           </div>
         </div>
 

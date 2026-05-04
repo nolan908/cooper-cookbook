@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Recipe } from "../api/types";
+import { useState } from "react";
 
 interface Props {
  recipe: Recipe;
@@ -9,14 +10,18 @@ interface Props {
 }
 
 export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Props) {
+ const [imgError, setImgError] = useState(false);
+ const [authorImgError, setAuthorImgError] = useState(false);
+
  return (
  <div className="fw-card group flex flex-col h-full bg-white text-left rounded-[2rem]">
  <div className=" relative border-b-2 border-fw-navy/5 overflow-hidden aspect-[4/3]">
- {recipe.imageUrl ? (
+ {recipe.imageUrl && !imgError ? (
  <img
  src={recipe.imageUrl}
  alt={recipe.title}
- className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+ className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+ onError={() => setImgError(true)} />
  ) : (
  <div className="w-full h-full bg-fw-yellow/10 flex items-center justify-center text-fw-navy/20">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16">
@@ -38,7 +43,7 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  {recipe.title}
  </h3>
  </Link>
- <p className="text-fw-navy/70 text-[14px] line-clamp-3 mb-8 font-bold tracking-tight leading-tight">
+ <p className="text-fw-navy/70 text-[14px] line-clamp-3 mb-8 font-bold tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
  {recipe.description || 'No information available'}
  </p>
  
@@ -68,10 +73,15 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  ) : !hideAuthor && (
  <>
  <div className="w-10 h-10 rounded-full border-2 border-fw-navy/10 overflow-hidden bg-fw-yellow shadow-sm flex items-center justify-center">
- {recipe.authorProfilePictureUrl ? (
- <img src={recipe.authorProfilePictureUrl} alt="author" className="w-full h-full object-cover"/>
+ {recipe.authorProfilePictureUrl && !authorImgError ? (
+ <img 
+   src={recipe.authorProfilePictureUrl} 
+   alt="author" 
+   className="w-full h-full object-cover"
+   onError={() => setAuthorImgError(true)}
+ />
  ) : (
- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-fw-navy">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-fw-navy">
  <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
  <line x1="6" y1="17" x2="18" y2="17" />
  </svg>
