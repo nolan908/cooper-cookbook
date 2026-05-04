@@ -175,12 +175,12 @@ export default function CreateRecipePage() {
                   className="w-20 border border-slate-300 rounded px-2 py-1.5 text-sm"
                   required
                 />
-                <input
-                  type="text"
+                <textarea
                   placeholder="Unit"
                   value={ing.unit}
                   onChange={(e) => updateIngredient(idx, "unit", e.target.value)}
-                  className="w-24 border border-slate-300 rounded px-2 py-1.5 text-sm break-words"
+                  className="w-24 border border-slate-300 rounded px-2 py-1.5 text-sm break-words resize-none"
+                  rows={1}
                   maxLength={25}
                 />
                 <input
@@ -190,7 +190,7 @@ export default function CreateRecipePage() {
                   onChange={(e) => updateIngredient(idx, "name", e.target.value)}
                   className="flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm break-words"
                   required
-                  maxLength={70}
+                  maxLength={54}
                 />
                 <button type="button" onClick={() => removeIngredient(idx)} className="text-red-400 hover:text-red-600 p-1.5">✕</button>
               </div>

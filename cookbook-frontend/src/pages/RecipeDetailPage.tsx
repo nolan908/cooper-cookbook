@@ -191,9 +191,9 @@ export default function RecipeDetailPage() {
  <ul className="space-y-4">
  {recipe.ingredients && recipe.ingredients.length > 0 ? (
    recipe.ingredients.map((ing: Ingredient, i: number) => (
-     <li key={i} className="flex items-start gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2 overflow-hidden">
-       <span className="text-fw-salmon shrink-0 w-24 break-words">{ing.quantity} {ing.unit}</span>
-       <span className="text-fw-navy break-words flex-1">{ing.name}</span>
+     <li key={i} className="flex items-start gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2">
+       <span className="text-fw-salmon shrink-0 w-32 break-words [overflow-wrap:anywhere]">{ing.quantity} {ing.unit}</span>
+       <span className="text-fw-navy break-words [overflow-wrap:anywhere] flex-1">{ing.name}</span>
      </li>
    ))
  ) : (

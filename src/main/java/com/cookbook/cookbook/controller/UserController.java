@@ -8,6 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -85,14 +86,25 @@ public class UserController {
 
     // POST forgot password
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> body) {
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> body, HttpServletRequest request) {
         String email = body.get("email");
         logger.info("Forgot password request for email: {}", email);
         try {
             String token = userService.generateResetToken(email);
             
-            // Production reset link using configured frontend URL
-            String resetLink = frontendUrl + "/reset-password?token=" + token;
+            // Determine the base URL for the reset link dynamically if possible
+            String baseUrl = frontendUrl;
+            String referer = request.getHeader("referer");
+            if (referer != null && !referer.isEmpty()) {
+                try {
+                    java.net.URL url = new java.net.URL(referer);
+                    baseUrl = url.getProtocol() + "://" + url.getAuthority();
+                } catch (Exception e) {
+                    logger.warn("Failed to parse referer: {}", referer);
+                }
+            }
+            
+            String resetLink = baseUrl + "/reset-password?token=" + token;
             
             if (mailSender != null) {
                 SimpleMailMessage message = new SimpleMailMessage();

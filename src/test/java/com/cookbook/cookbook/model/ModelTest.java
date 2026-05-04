@@ -11,14 +11,14 @@ public class ModelTest {
         ing.setId(1L);
         ing.setRecipeId(2L);
         ing.setName("Salt");
-        ing.setQuantity("1");
+        ing.setQuantity(1.0);
         ing.setUnit("tsp");
         ing.setOrderIndex(0);
 
         assertEquals(1L, ing.getId());
         assertEquals(2L, ing.getRecipeId());
         assertEquals("Salt", ing.getName());
-        assertEquals("1", ing.getQuantity());
+        assertEquals(1.0, ing.getQuantity());
         assertEquals("tsp", ing.getUnit());
         assertEquals(0, ing.getOrderIndex());
     }

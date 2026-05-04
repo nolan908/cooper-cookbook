@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getUserById, updateProfile, updateAccount, deleteUser, verifyPassword } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import ImagePicker from "../components/ImagePicker";
@@ -159,22 +159,6 @@ export default function ProfilePage() {
             <p className="text-fw-navy/60 text-sm mt-6 italic font-serif leading-relaxed px-2 break-words overflow-hidden w-full">
               {profileForm.bio || "No bio yet. Tell us about your kitchen adventures!"}
             </p>
-          </div>
-
-          <div className="bg-fw-teal rounded-[2rem] p-6 text-white shadow-lg overflow-hidden relative border-2 border-fw-navy/10">
-            <div className="absolute -right-8 -bottom-8 opacity-10 rotate-12">
-              <svg className="w-40 h-40" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <h3 className="font-black text-[10px] tracking-widest text-white/50">Recovery</h3>
-            <p className="mt-4 text-sm font-bold leading-relaxed text-white">Forgot password?</p>
-            <Link
-              to="/forgot-password"
-              className="mt-6 w-full bg-white text-fw-teal py-3 rounded-xl text-[10px] font-black tracking-widest transition active:scale-95 shadow-sm inline-block text-center"
-            >
-              Request Reset Link
-            </Link>
           </div>
         </div>
 
