@@ -1,10 +1,4 @@
-DROP TABLE IF EXISTS saved_recipes;
-DROP TABLE IF EXISTS collection_recipes;
-DROP TABLE IF EXISTS collections;
-DROP TABLE IF EXISTS steps;
-DROP TABLE IF EXISTS ingredients;
-DROP TABLE IF EXISTS recipes;
-DROP TABLE IF EXISTS users;
+DROP ALL OBJECTS;
 
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -27,7 +21,7 @@ CREATE TABLE recipes (
     prep_time INT,
     cook_time INT,
     servings INT,
-    image_url VARCHAR(500),
+    image_url TEXT,
     is_public BOOLEAN,
     category_tags VARCHAR(255),
     author_id BIGINT,
