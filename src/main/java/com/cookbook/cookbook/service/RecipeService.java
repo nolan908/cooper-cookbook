@@ -80,14 +80,9 @@ public class RecipeService {
     private void validateIngredients(List<Ingredient> ingredients) {
         if (ingredients == null) return;
         for (Ingredient ing : ingredients) {
-            if (ing.getQuantity() != null && !ing.getQuantity().trim().isEmpty()) {
-                try {
-                    double val = Double.parseDouble(ing.getQuantity().trim());
-                    if (val < 0) {
-                        throw new RuntimeException("Ingredient quantity cannot be negative: " + ing.getName());
-                    }
-                } catch (NumberFormatException ignored) {
-                    // Non-numeric quantities like "a pinch" are allowed
+            if (ing.getQuantity() != null) {
+                if (ing.getQuantity() < 0) {
+                    throw new RuntimeException("Ingredient quantity cannot be negative: " + ing.getName());
                 }
             }
         }

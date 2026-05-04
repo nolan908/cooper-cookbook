@@ -23,7 +23,6 @@ export default function ProfilePage() {
   const [verificationInput, setVerificationInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [email, setEmail] = useState("");
   const [imgError, setImgError] = useState(false);
 
 
@@ -35,7 +34,6 @@ export default function ProfilePage() {
           bio: res.data.bio || "",
           profilePictureUrl: res.data.profilePictureUrl || "",
         });
-        setEmail(res.data.email);
       });
     }
   }, [userId]);
@@ -47,7 +45,7 @@ export default function ProfilePage() {
     setImgError(false);
     const finalForm = {
       ...profileForm,
-      profilePictureUrl: profileForm.profilePictureUrl || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+      profilePictureUrl: profileForm.profilePictureUrl || ""
     };
     try {
       await updateProfile(userId, finalForm);

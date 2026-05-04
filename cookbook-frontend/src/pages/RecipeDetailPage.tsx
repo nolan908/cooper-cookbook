@@ -132,12 +132,14 @@ export default function RecipeDetailPage() {
  {/* Right: Content */}
  <div className="flex flex-col">
  <div className="mb-8">
- {recipe.categoryTags && (
- <span className="bg-fw-teal text-white px-3 py-1 text-[10px] font-black tracking-widest border-2 border-fw-navy mb-4 inline-block shadow-[2px_2px_0px_0px_rgba(17,17,17,1)] uppercase">
- {recipe.categoryTags.split(',')[0]}
- </span>
- )}
- <h1 className="text-6xl md:text-7xl font-black italic tracking-tighter leading-[0.9] text-fw-navy mb-6">
+ <div className="flex flex-wrap gap-2 mb-4">
+  {recipe.categoryTags && recipe.categoryTags.split(',').map((tag, index) => (
+    <span key={index} className="bg-fw-teal text-white px-3 py-1 text-[10px] font-black tracking-widest border-2 border-fw-navy inline-block shadow-[2px_2px_0px_0px_rgba(17,17,17,1)] uppercase">
+      {tag.trim()}
+    </span>
+  ))}
+ </div>
+ <h1 className="text-6xl md:text-7xl font-black italic tracking-tighter leading-[0.9] text-fw-navy mb-6 break-words">
  {recipe.title}
  </h1>
  <div className="flex items-center gap-4 py-4 border-y-2 border-fw-navy/10">
@@ -159,7 +161,7 @@ export default function RecipeDetailPage() {
  </div>
  </div>
 
- <p className="text-xl font-bold leading-snug mb-10 text-fw-navy/80 tracking-tight">
+ <p className="text-xl font-bold leading-snug mb-10 text-fw-navy/80 tracking-tight break-words whitespace-pre-wrap [overflow-wrap:anywhere]">
  {recipe.description || 'No information available'}
  </p>
 
@@ -201,13 +203,13 @@ export default function RecipeDetailPage() {
  </section>
 
  <section>
- <h2 className="text-4xl font-black italic mb-8 underline decoration-fw-teal underline-offset-8">METHOD</h2>
+ <h2 className="text-4xl font-black italic mb-8 underline decoration-fw-teal underline-offset-8">STEPS</h2>
  <ol className="space-y-10">
  {recipe.steps && recipe.steps.length > 0 ? (
    recipe.steps.map((step: Step, i: number) => (
-     <li key={i} className="flex gap-6 group overflow-hidden">
+     <li key={i} className="flex gap-6 group">
        <span className="text-5xl font-black text-fw-navy/10 group-hover:text-fw-salmon transition-colors italic shrink-0">{i+1}</span>
-       <p className="text-xl font-bold tracking-tight leading-tight pt-2 break-words flex-1">{step.instruction}</p>
+       <p className="text-xl font-bold tracking-tight leading-tight pt-2 break-all flex-1 whitespace-pre-wrap">{step.instruction}</p>
      </li>
    ))
  ) : (

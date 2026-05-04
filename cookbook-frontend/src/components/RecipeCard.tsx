@@ -43,7 +43,7 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  {recipe.title}
  </h3>
  </Link>
- <p className="text-fw-navy/70 text-[14px] line-clamp-3 mb-8 font-bold tracking-tight leading-tight">
+ <p className="text-fw-navy/70 text-[14px] line-clamp-3 mb-8 font-bold tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
  {recipe.description || 'No information available'}
  </p>
  
@@ -81,7 +81,7 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
    onError={() => setAuthorImgError(true)}
  />
  ) : (
- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-fw-navy">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-fw-navy">
  <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
  <line x1="6" y1="17" x2="18" y2="17" />
  </svg>

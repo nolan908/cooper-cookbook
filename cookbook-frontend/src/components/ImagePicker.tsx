@@ -88,7 +88,6 @@ export default function ImagePicker({ value, onChange, label, type = "recipe", h
         {mode === "url" && (
           <input
             type="url"
-            placeholder="Enter image URL..."
             value={value.startsWith("data:") ? "" : value}
             onChange={(e) => handleUrlChange(e.target.value)}
             className="w-full bg-fw-navy/5 p-3 text-xs font-bold focus:bg-fw-yellow transition-all outline-none rounded-lg"
@@ -141,11 +140,18 @@ export default function ImagePicker({ value, onChange, label, type = "recipe", h
                   className="w-full h-full object-cover" 
                   onError={() => setImgError(true)}
                 />
-              ) : (
+              ) : type === "pfp" ? (
                 <div className="w-full h-full flex items-center justify-center bg-fw-navy/5 text-fw-navy/20">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-fw-navy/5 text-fw-navy/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
+                    <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+                    <line x1="6" y1="17" x2="18" y2="17" />
                   </svg>
                 </div>
               )}

@@ -4,7 +4,7 @@ public class Ingredient {
     private Long id;
     private Long recipeId;
     private String name;
-    private String quantity;
+    private Double quantity;
     private String unit;
     private Integer orderIndex;
 
@@ -19,8 +19,8 @@ public class Ingredient {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public String getQuantity() { return quantity; }
-    public void setQuantity(String quantity) { this.quantity = quantity; }
+    public Double getQuantity() { return quantity; }
+    public void setQuantity(Double quantity) { this.quantity = quantity; }
 
     public String getUnit() { return unit; }
     public void setUnit(String unit) { this.unit = unit; }

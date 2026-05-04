@@ -44,7 +44,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const finalAvatar = form.profilePictureUrl || "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg";
+    const finalAvatar = form.profilePictureUrl || "";
     try {
       await register({
         username: form.username,
