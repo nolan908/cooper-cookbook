@@ -100,4 +100,17 @@ public class AuthController {
         String token = jwtUtil.generateToken(username);
         return ResponseEntity.ok(Map.of("token", token));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String jwt = token.substring(7);
+            String username = jwtUtil.extractUsername(jwt);
+            Optional<User> user = userRepository.findByUsername(username);
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            }
+        }
+        return ResponseEntity.status(401).body("Unauthorized");
+    }
 }

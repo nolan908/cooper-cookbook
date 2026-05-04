@@ -33,6 +33,10 @@ export default function CreateRecipePage() {
     setIngredients([...ingredients, { name: "", quantity: "", unit: "", orderIndex: ingredients.length }]);
 
   const updateIngredient = (index: number, field: string, value: string) => {
+    if (field === "quantity") {
+      const num = parseFloat(value);
+      if (!isNaN(num) && num < 0) return;
+    }
     const next = [...ingredients];
     (next[index] as any)[field] = value;
     setIngredients(next);

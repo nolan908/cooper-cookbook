@@ -18,11 +18,15 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final JavaMailSender mailSender;
+    
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private org.springframework.mail.javamail.JavaMailSender mailSender;
 
-    public UserController(UserService userService, JavaMailSender mailSender) {
+    @org.springframework.beans.factory.annotation.Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
+
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.mailSender = mailSender;
     }
 
     // GET all users
@@ -87,18 +91,21 @@ public class UserController {
         try {
             String token = userService.generateResetToken(email);
             
-            // Production reset link pointing to Azure deployment
-            String resetLink = "http://coopercookbook.eastus.azurecontainer.io/reset-password?token=" + token;
+            // Production reset link using configured frontend URL
+            String resetLink = frontendUrl + "/reset-password?token=" + token;
             
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("Cooper Cookbook - Password Reset");
-            message.setText("Hello,\n\nYou requested a password reset. Click the link below to set a new password:\n\n" + 
-                            resetLink + "\n\nIf you did not request this, please ignore this email.");
+            if (mailSender != null) {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(email);
+                message.setSubject("Cooper Cookbook - Password Reset");
+                message.setText("Hello,\n\nYou requested a password reset. Click the link below to set a new password:\n\n" + 
+                                resetLink + "\n\nIf you did not request this, please ignore this email.");
+                mailSender.send(message);
+                logger.info("Real email sent to {}: {}", email, resetLink);
+            } else {
+                logger.warn("Mail sender not configured. Reset link for {}: {}", email, resetLink);
+            }
             
-            mailSender.send(message);
-            
-            logger.info("Real email sent to {}: {}", email, resetLink);
             return ResponseEntity.ok("Reset link sent to " + email);
         } catch (Exception e) {
             logger.error("Error sending reset email to {}: {}", email, e.getMessage());

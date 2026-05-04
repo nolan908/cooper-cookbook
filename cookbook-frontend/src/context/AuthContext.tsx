@@ -53,24 +53,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Resolve username → userId & profile info on login
   useEffect(() => {
-    if (!token || !username) {
+    if (!token) {
       setUserId(null);
       setProfilePictureUrl(null);
       return;
     }
     axios
-      .get("/api/users", { headers: { Authorization: `Bearer ${token}` } })
+      .get("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
-        const me = res.data.find(
-          (u: { username: string }) => u.username === username,
-        );
-        if (me) {
-          setUserId(me.id);
-          setProfilePictureUrl(me.profilePictureUrl);
-        }
+        setUserId(res.data.id);
+        setProfilePictureUrl(res.data.profilePictureUrl);
       })
-      .catch(() => {});
-  }, [token, username]);
+      .catch(() => {
+        // If /me fails, token might be invalid
+        setToken(null);
+      });
+  }, [token]);
 
   return (
     <AuthContext.Provider

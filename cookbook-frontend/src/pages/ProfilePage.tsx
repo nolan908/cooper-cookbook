@@ -171,7 +171,7 @@ export default function ProfilePage() {
               {profileForm.displayName || "Unknown Chef"}
             </h2>
             <p className="text-fw-navy/40 font-bold text-[10px] tracking-widest mt-3">Culinary Artist</p>
-            <p className="text-fw-navy/60 text-sm mt-6 italic font-serif leading-relaxed px-2">
+            <p className="text-fw-navy/60 text-sm mt-6 italic font-serif leading-relaxed px-2 break-words overflow-hidden w-full">
               {profileForm.bio || "No bio yet. Tell us about your kitchen adventures!"}
             </p>
           </div>

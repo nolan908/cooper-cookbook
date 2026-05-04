@@ -1,6 +1,7 @@
 package com.cookbook.cookbook.service;
 
 import com.cookbook.cookbook.model.Recipe;
+import com.cookbook.cookbook.model.Ingredient;
 import com.cookbook.cookbook.repository.RecipeRepository;
 import com.cookbook.cookbook.repository.IngredientRepository;
 import com.cookbook.cookbook.repository.StepRepository;
@@ -76,7 +77,29 @@ public class RecipeService {
                 .orElseThrow(() -> new RuntimeException("Forked recipe not found"));
     }
 
+    private void validateIngredients(List<Ingredient> ingredients) {
+        if (ingredients == null) return;
+        for (Ingredient ing : ingredients) {
+            if (ing.getQuantity() != null && !ing.getQuantity().trim().isEmpty()) {
+                try {
+                    double val = Double.parseDouble(ing.getQuantity().trim());
+                    if (val < 0) {
+                        throw new RuntimeException("Ingredient quantity cannot be negative: " + ing.getName());
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Non-numeric quantities like "a pinch" are allowed
+                }
+            }
+        }
+    }
+
     public void createRecipe(Recipe recipe) {
+        if (recipeRepository.existsByTitleAndAuthorId(recipe.getTitle(), recipe.getAuthorId())) {
+            throw new RuntimeException("You already have a recipe with this title.");
+        }
+
+        validateIngredients(recipe.getIngredients());
+
         Long newId = recipeRepository.saveAndReturnId(recipe);
         if (recipe.getIngredients() != null) {
             recipe.getIngredients().forEach(i -> {
@@ -93,6 +116,15 @@ public class RecipeService {
     }
 
     public void updateRecipe(Recipe recipe) {
+        Optional<Recipe> existing = recipeRepository.findById(recipe.getId());
+        if (existing.isPresent() && !existing.get().getTitle().equals(recipe.getTitle())) {
+            if (recipeRepository.existsByTitleAndAuthorId(recipe.getTitle(), recipe.getAuthorId())) {
+                throw new RuntimeException("You already have another recipe with this title.");
+            }
+        }
+
+        validateIngredients(recipe.getIngredients());
+
         recipeRepository.update(recipe);
 
         ingredientRepository.deleteByRecipeId(recipe.getId());

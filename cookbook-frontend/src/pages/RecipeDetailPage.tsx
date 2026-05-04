@@ -10,6 +10,8 @@ export default function RecipeDetailPage() {
  const [loading, setLoading] = useState(true);
  const [savedId, setSavedId] = useState<number | null>(null);
  const [forking, setForking] = useState(false);
+ const [imgError, setImgError] = useState(false);
+ const [authorImgError, setAuthorImgError] = useState(false);
  const { userId } = useAuth();
  const navigate = useNavigate();
 
@@ -87,8 +89,13 @@ export default function RecipeDetailPage() {
  {/* Left: Image & Meta */}
  <div className="space-y-8">
  <div className="border-4 border-fw-navy shadow-fw overflow-hidden bg-white">
- {recipe.imageUrl ? (
- <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-auto object-cover"/>
+ {recipe.imageUrl && !imgError ? (
+ <img 
+   src={recipe.imageUrl} 
+   alt={recipe.title} 
+   className="w-full h-auto object-cover"
+   onError={() => setImgError(true)}
+ />
  ) : (
  <div className="w-full aspect-square bg-fw-yellow/10 flex items-center justify-center text-fw-navy/20">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-32 h-32">
@@ -102,21 +109,21 @@ export default function RecipeDetailPage() {
  <div className="bg-fw-yellow border-4 border-fw-navy p-8 shadow-fw">
  <h3 className="text-2xl font-black mb-6 italic tracking-tighter">OVERVIEW</h3>
  <div className="grid grid-cols-2 gap-8">
- <div className="border-l-4 border-fw-navy pl-4">
+ <div className="border-l-4 border-fw-navy pl-4 overflow-hidden">
  <p className="text-[10px] font-black text-fw-navy/40 mb-1">PREP TIME</p>
- <p className="text-3xl font-black text-fw-navy">{recipe.prepTime || '—'} MIN</p>
+ <p className="text-3xl font-black text-fw-navy break-words">{recipe.prepTime || '—'} MIN</p>
  </div>
- <div className="border-l-4 border-fw-navy pl-4">
+ <div className="border-l-4 border-fw-navy pl-4 overflow-hidden">
  <p className="text-[10px] font-black text-fw-navy/40 mb-1">COOK TIME</p>
- <p className="text-3xl font-black text-fw-navy">{recipe.cookTime || '—'} MIN</p>
+ <p className="text-3xl font-black text-fw-navy break-words">{recipe.cookTime || '—'} MIN</p>
  </div>
- <div className="border-l-4 border-fw-navy pl-4">
+ <div className="border-l-4 border-fw-navy pl-4 overflow-hidden">
  <p className="text-[10px] font-black text-fw-navy/40 mb-1">SERVINGS</p>
- <p className="text-3xl font-black text-fw-navy">{recipe.servings || '—'} PPL</p>
+ <p className="text-3xl font-black text-fw-navy break-words">{recipe.servings || '—'} PPL</p>
  </div>
- <div className="border-l-4 border-fw-navy pl-4">
+ <div className="border-l-4 border-fw-navy pl-4 overflow-hidden">
  <p className="text-[10px] font-black text-fw-navy/40 mb-1">ORIGIN</p>
- <p className="text-xl font-black text-fw-navy truncate">{recipe.authorDisplayName}</p>
+ <p className="text-xl font-black text-fw-navy truncate hover:whitespace-normal break-words">{recipe.authorDisplayName}</p>
  </div>
  </div>
  </div>
@@ -134,8 +141,19 @@ export default function RecipeDetailPage() {
  {recipe.title}
  </h1>
  <div className="flex items-center gap-4 py-4 border-y-2 border-fw-navy/10">
- <div className="w-12 h-12 rounded-full border-2 border-fw-navy overflow-hidden">
- <img src={recipe.authorProfilePictureUrl} className="w-full h-full object-cover"/>
+ <div className="w-12 h-12 rounded-full border-2 border-fw-navy overflow-hidden bg-fw-yellow flex items-center justify-center">
+ {recipe.authorProfilePictureUrl && !authorImgError ? (
+ <img 
+   src={recipe.authorProfilePictureUrl} 
+   className="w-full h-full object-cover"
+   onError={() => setAuthorImgError(true)}
+ />
+ ) : (
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-fw-navy">
+ <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+ <line x1="6" y1="17" x2="18" y2="17" />
+ </svg>
+ )}
  </div>
  <p className="font-black text-xs tracking-widest text-fw-navy/60">Contributed by {recipe.authorDisplayName}</p>
  </div>
@@ -171,9 +189,9 @@ export default function RecipeDetailPage() {
  <ul className="space-y-4">
  {recipe.ingredients && recipe.ingredients.length > 0 ? (
    recipe.ingredients.map((ing: Ingredient, i: number) => (
-     <li key={i} className="flex items-center gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2">
-       <span className="text-fw-salmon shrink-0 w-24">{ing.quantity} {ing.unit}</span>
-       <span className="text-fw-navy">{ing.name}</span>
+     <li key={i} className="flex items-start gap-4 text-lg font-black border-b-2 border-fw-navy/5 pb-2 overflow-hidden">
+       <span className="text-fw-salmon shrink-0 w-24 break-words">{ing.quantity} {ing.unit}</span>
+       <span className="text-fw-navy break-words flex-1">{ing.name}</span>
      </li>
    ))
  ) : (
@@ -187,9 +205,9 @@ export default function RecipeDetailPage() {
  <ol className="space-y-10">
  {recipe.steps && recipe.steps.length > 0 ? (
    recipe.steps.map((step: Step, i: number) => (
-     <li key={i} className="flex gap-6 group">
-       <span className="text-5xl font-black text-fw-navy/10 group-hover:text-fw-salmon transition-colors italic">{i+1}</span>
-       <p className="text-xl font-bold tracking-tight leading-tight pt-2">{step.instruction}</p>
+     <li key={i} className="flex gap-6 group overflow-hidden">
+       <span className="text-5xl font-black text-fw-navy/10 group-hover:text-fw-salmon transition-colors italic shrink-0">{i+1}</span>
+       <p className="text-xl font-bold tracking-tight leading-tight pt-2 break-words flex-1">{step.instruction}</p>
      </li>
    ))
  ) : (
