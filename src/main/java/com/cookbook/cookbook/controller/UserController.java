@@ -4,6 +4,8 @@ import com.cookbook.cookbook.model.User;
 import com.cookbook.cookbook.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +18,11 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final JavaMailSender mailSender;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JavaMailSender mailSender) {
         this.userService = userService;
+        this.mailSender = mailSender;
     }
 
     // GET all users
@@ -82,14 +86,23 @@ public class UserController {
         logger.info("Forgot password request for email: {}", email);
         try {
             String token = userService.generateResetToken(email);
-            // In a real app, this would trigger an email.
-            // For this demo, we print the reset link to the console.
-            String resetLink = "http://localhost:5173/reset-password?token=" + token;
-            logger.info("SIMULATION: Reset link for {}: {}", email, resetLink);
+            
+            // Production reset link pointing to Azure deployment
+            String resetLink = "http://coopercookbook.eastus.azurecontainer.io/reset-password?token=" + token;
+            
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("Cooper Cookbook - Password Reset");
+            message.setText("Hello,\n\nYou requested a password reset. Click the link below to set a new password:\n\n" + 
+                            resetLink + "\n\nIf you did not request this, please ignore this email.");
+            
+            mailSender.send(message);
+            
+            logger.info("Real email sent to {}: {}", email, resetLink);
             return ResponseEntity.ok("Reset link sent to " + email);
-        } catch (RuntimeException e) {
-            logger.error("Error generating reset token for email {}: {}", email, e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error sending reset email to {}: {}", email, e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to send reset email. Please ensure your email is correct.");
         }
     }
 

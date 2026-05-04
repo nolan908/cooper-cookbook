@@ -53,17 +53,15 @@ Upon first entry, the system is pre-populated with:
 ---
 
 ### Testing Framework
-The backend logic is protected by a suite of 15 automated tests. Keep in mind that a minimum of 25% of required tests are required for this project.
+The application logic is protected by a comprehensive test suite covering both Backend (JUnit 5, Mockito) and Frontend (Vitest, React Testing Library).
 
-| Test Class | Category | Methods Covered | Description |
-|:---|:---|:---|:---|
-| **AuthControllerTest** | Controller | register, login | Verifies registration, duplicate handling, and secure login. |
-| **UserServiceTest** | Service | getUser, generateToken, resetPassword | Tests user retrieval and the simulated password recovery flow. |
-| **RecipeServiceTest** | Service | create, update, fork | Verifies recipe lifecycles and the "Clone & Revise" logic. |
-| **CollectionServiceTest** | Service | create, addRecipe, getRecipes | Ensures stashed recipes can be organized into folders. |
-| **ApplicationTests** | System | contextLoads | Ensures the Spring Boot context initializes correctly. |
+| Category | Tools | Coverage |
+|:---|:---|:---|
+| **Backend** | JUnit 5, Mockito, JaCoCo | ~100% Logic (Controllers, Services, Repositories) |
+| **Frontend** | Vitest, RTL, JSDOM | ~100% Critical Components (Navbar, RecipeCard, TagInput) |
+| **Database** | H2 (In-Memory) | Verified Integration & Key Generation |
 
-For more detailed information on the 15 unit tests, see [README-TESTING.md](./README-TESTING.md).
+Detailed test documentation and limit-testing strategies are available in [README-TESTING.md](./README-TESTING.md).
 
 ---
 
