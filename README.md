@@ -29,7 +29,7 @@ The current version (v3.4.0) includes the following functionality:
 *   **Search:** A keyword-based search feature to filter the recipe catalog by string. Additional filtering is possible if enough time permits, however not required.
 *   **Security Tools:** 
     *   **Change Password:** Secure update flow requiring current password verification.
-    *   **Forgot Password:** A simulation system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address. The "forgot password" option via email address is still a work in progress; the "forgot password" option when already logged in still works.
+    *   **Forgot Password:** A system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address. 
 
 ---
 
@@ -65,7 +65,8 @@ Detailed test documentation and limit-testing strategies are available in [READM
 
 ---
 
-### Future Development
-The final version of Cooper Cookbook will include a comprehensive landing page with detailed instructions on how to maximize the platform's features.
+### Landing Page
+
+The Cooper Cookbook will include a comprehensive landing page with detailed instructions to help you maximize your use of the platform's features.
 
 2026 Alex Valsamis & Nolan Griffith 
