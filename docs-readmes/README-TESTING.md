@@ -56,5 +56,5 @@ npm test
 # open coverage/index.html
 ```
 
-## Latest Metrics
-For specific test case counts and exact coverage percentages, refer to [TESTING-REPORT.md](./TESTING-REPORT.md).
+## Latest Metrics & Test Information
+For specific test case counts, exact coverage percentages, and detailed information regarding the directory paths of the tests, please refer to [TestingOutput.pdf](./TestingOutput.pdf).
