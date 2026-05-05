@@ -29,7 +29,7 @@ The current version (v3.4.0) includes the following functionality:
 *   **Search:** A keyword-based search feature to filter the recipe catalog by string. Additional filtering is possible if enough time permits, however not required.
 *   **Security Tools:** 
     *   **Change Password:** Secure update flow requiring current password verification.
-    *   **Forgot Password:** A system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address. 
+    *   **Forgot Password:** A system that generates a local reset link in the backend console logs, representing an email sent to the user's registered Gmail address. Accessed via the login screen, this remains a stretch goal that was completed and should work as long as https://coopercookbook.eastus.azurecontainer.io/ remains deployed. This was not introduced during the final demo.
 
 ---
 
