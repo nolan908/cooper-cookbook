@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1777910887468" clover="3.2.0">
-  <project timestamp="1777910887469" name="All files">
-    <metrics statements="30" coveredstatements="25" conditionals="49" coveredconditionals="32" methods="15" coveredmethods="11" elements="94" coveredelements="68" complexity="0" loc="30" ncloc="30" packages="1" files="3" classes="3"/>
+<coverage generated="1777994967088" clover="3.2.0">
+  <project timestamp="1777994967088" name="All files">
+    <metrics statements="34" coveredstatements="27" conditionals="53" coveredconditionals="35" methods="17" coveredmethods="11" elements="104" coveredelements="73" complexity="0" loc="34" ncloc="34" packages="1" files="3" classes="3"/>
     <file name="Navbar.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/Navbar.tsx">
       <metrics statements="7" coveredstatements="5" conditionals="8" coveredconditionals="4" methods="2" coveredmethods="1"/>
       <line num="5" count="2" type="stmt"/>
@@ -13,8 +13,12 @@
       <line num="14" count="1" type="stmt"/>
     </file>
     <file name="RecipeCard.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/RecipeCard.tsx">
-      <metrics statements="1" coveredstatements="1" conditionals="26" coveredconditionals="15" methods="1" coveredmethods="1"/>
-      <line num="12" count="2" type="stmt"/>
+      <metrics statements="5" coveredstatements="3" conditionals="30" coveredconditionals="18" methods="3" coveredmethods="1"/>
+      <line num="13" count="2" type="stmt"/>
+      <line num="14" count="2" type="stmt"/>
+      <line num="16" count="2" type="stmt"/>
+      <line num="25" count="0" type="stmt"/>
+      <line num="83" count="0" type="stmt"/>
     </file>
     <file name="TagInput.tsx" path="/Users/nolangriffith/cooper-cookbook/cookbook-frontend/src/components/TagInput.tsx">
       <metrics statements="22" coveredstatements="19" conditionals="15" coveredconditionals="13" methods="12" coveredmethods="9"/>

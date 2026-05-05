@@ -15,13 +15,6 @@ The backend test suite verifies core business logic, security filters, and datab
 | **Repositories** | `JdbcTest`, `H2` | SQL queries, schema integrity, key generation. |
 | **Security** | `JwtUtil`, `JwtFilter` | Token generation, parsing, and context authorization. |
 
-### Key Test Classes
-- `AuthControllerTest`: registration, login, and step-1 validation.
-- `RecipeControllerTest`: CRUD operations and forking endpoints.
-- `UserControllerTest`: Profile management and security verification.
-- `CollectionRepositoryTest`: Integration testing with H2 database.
-- `JwtUtilTest`: Cryptographic token validation.
-
 ### Limit Testing
 We specifically test edge cases including:
 - Duplicate usernames/emails.
@@ -46,8 +39,8 @@ The frontend uses Vitest for high-performance unit and component testing.
 
 ### Component Coverage
 - **`Navbar`**: Ensures the navigation is hidden for logged-out users.
-- **`RecipeCard`**: Verifies dynamic metadata rendering (e.g., Forked vs. Original).
-- **`TagInput`**: Comprehensive testing of keyboard events (Enter to add, Backspace to remove).
+- **`RecipeCard`**: Verifies dynamic metadata rendering and navigation.
+- **`TagInput`**: Comprehensive testing of keyboard events and character limits.
 
 ### Limit Testing (Frontend)
 - **Tag Volume**: Verified handling of extremely long strings (1000+ chars) in tags.
@@ -58,7 +51,10 @@ The frontend uses Vitest for high-performance unit and component testing.
 ```bash
 cd cookbook-frontend
 npm test
+
+# View coverage report
+# open coverage/index.html
 ```
 
-## Coverage Goal
-The project maintains **100% logic coverage** on critical paths including Authentication, Forking Lineage, and Stash Management.
+## Latest Metrics
+For specific test case counts and exact coverage percentages, refer to [TESTING-REPORT.md](./TESTING-REPORT.md).

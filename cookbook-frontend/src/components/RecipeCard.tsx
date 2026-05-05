@@ -16,6 +16,7 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  return (
  <div className="fw-card group flex flex-col h-full bg-white text-left rounded-[2rem]">
  <div className=" relative border-b-2 border-fw-navy/5 overflow-hidden aspect-[4/3]">
+ <Link to={`/recipe/${recipe.id}`}>
  {recipe.imageUrl && !imgError ? (
  <img
  src={recipe.imageUrl}
@@ -30,6 +31,7 @@ export default function RecipeCard({ recipe, actions, onEdit, hideAuthor }: Prop
  </svg>
  </div>
  )}
+ </Link>
  {recipe.categoryTags && (
  <div className="absolute top-4 left-4 bg-fw-yellow text-fw-navy border-2 border-fw-navy/10 px-3 py-1 text-[10px] font-black tracking-widest rounded-lg z-10 shadow-sm uppercase">
  {recipe.categoryTags.split(',')[0]}
