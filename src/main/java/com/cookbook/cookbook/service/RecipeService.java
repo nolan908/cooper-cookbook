@@ -80,9 +80,20 @@ public class RecipeService {
     private void validateIngredients(List<Ingredient> ingredients) {
         if (ingredients == null) return;
         for (Ingredient ing : ingredients) {
-            if (ing.getQuantity() != null) {
-                if (ing.getQuantity() < 0) {
-                    throw new RuntimeException("Ingredient quantity cannot be negative: " + ing.getName());
+            if (ing.getQuantity() != null && !ing.getQuantity().trim().isEmpty()) {
+                try {
+                    // Try to parse as double to check for negatives, but fractions are allowed as strings
+                    String q = ing.getQuantity().trim();
+                    if (q.contains("/")) {
+                        // Basic check for fraction format if needed, but for now we just allow it
+                    } else {
+                        double val = Double.parseDouble(q);
+                        if (val < 0) {
+                            throw new RuntimeException("Ingredient quantity cannot be negative: " + ing.getName());
+                        }
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Non-numeric quantities or fractions are allowed
                 }
             }
         }

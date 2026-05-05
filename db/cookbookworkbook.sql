@@ -42,7 +42,7 @@ CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
     recipe_id INT REFERENCES recipes(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
-    quantity DECIMAL(10,2),
+    quantity VARCHAR(50),
     unit VARCHAR(50),
     order_index INT
 );
@@ -73,7 +73,7 @@ CREATE TABLE saved_recipes (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     recipe_id INT REFERENCES recipes(id) ON DELETE CASCADE,
-    original_author_id INT REFERENCES users(id),
+    original_author_id INT REFERENCES users(id) ON DELETE SET NULL,
     saved_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(user_id, recipe_id)
 );

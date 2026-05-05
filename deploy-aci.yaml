@@ -29,7 +29,7 @@ properties:
             value: postgres
           - name: SPRING_DATASOURCE_PASSWORD
             value: password123
-          - name: FRONTEND_URL
+          - name: APP_FRONTEND_URL
             value: http://coopercookbook.eastus.azurecontainer.io
           - name: SPRING_MAIL_HOST
             value: smtp.gmail.com

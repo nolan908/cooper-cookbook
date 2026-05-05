@@ -30,16 +30,11 @@ export default function CreateRecipePage() {
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const addIngredient = () =>
-    setIngredients([...ingredients, { name: "", quantity: 0, unit: "", orderIndex: ingredients.length }]);
+    setIngredients([...ingredients, { name: "", quantity: "", unit: "", orderIndex: ingredients.length }]);
 
-  const updateIngredient = (index: number, field: string, value: string | number) => {
+  const updateIngredient = (index: number, field: string, value: string) => {
     const next = [...ingredients];
-    if (field === "quantity") {
-      const val = typeof value === "string" ? parseFloat(value) : value;
-      (next[index] as any)[field] = isNaN(val) ? 0 : Math.max(0, val);
-    } else {
-      (next[index] as any)[field] = value;
-    }
+    (next[index] as any)[field] = value;
     setIngredients(next);
   };
 
@@ -120,7 +115,7 @@ export default function CreateRecipePage() {
                 type="number"
                 min="0"
                 max="10000"
-                value={form.prepTime}
+                value={form.prepTime || ""}
                 onChange={(e) => update("prepTime", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -131,7 +126,7 @@ export default function CreateRecipePage() {
                 type="number"
                 min="0"
                 max="10000"
-                value={form.cookTime}
+                value={form.cookTime || ""}
                 onChange={(e) => update("cookTime", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -142,7 +137,7 @@ export default function CreateRecipePage() {
                 type="number"
                 min="0"
                 max="1000"
-                value={form.servings}
+                value={form.servings || ""}
                 onChange={(e) => update("servings", Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -166,9 +161,7 @@ export default function CreateRecipePage() {
             {ingredients.map((ing, idx) => (
               <div key={idx} className="flex gap-2 items-start">
                 <input
-                  type="number"
-                  step="any"
-                  min="0"
+                  type="text"
                   placeholder="Qty"
                   value={ing.quantity || ""}
                   onChange={(e) => updateIngredient(idx, "quantity", e.target.value)}

@@ -12,7 +12,7 @@ export interface Ingredient {
   id?: number;
   recipeId?: number;
   name: string;
-  quantity: number;
+  quantity: string;
   unit: string;
   orderIndex: number;
 }
