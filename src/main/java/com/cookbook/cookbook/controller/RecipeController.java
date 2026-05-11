@@ -2,6 +2,8 @@ package com.cookbook.cookbook.controller;
 
 import com.cookbook.cookbook.model.Recipe;
 import com.cookbook.cookbook.service.RecipeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/recipes")
 public class RecipeController {
 
+    private static final Logger log = LoggerFactory.getLogger(RecipeController.class);
     private final RecipeService recipeService;
 
     public RecipeController(RecipeService recipeService) {
@@ -46,12 +49,12 @@ public class RecipeController {
     // POST create recipe
     @PostMapping
     public ResponseEntity<String> createRecipe(@RequestBody Recipe recipe) {
-        System.out.println("Creating recipe: " + recipe.getTitle() + " for author: " + recipe.getAuthorId());
+        log.info("Creating recipe: {} for author: {}", recipe.getTitle(), recipe.getAuthorId());
         try {
             recipeService.createRecipe(recipe);
             return ResponseEntity.ok("Recipe created successfully");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error creating recipe: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body("Error creating recipe: " + e.getMessage());
         }
     }
