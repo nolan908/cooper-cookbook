@@ -145,7 +145,7 @@ public class UserController {
             @RequestBody Map<String, String> body) {
         String password = body.get("password");
         boolean isValid = userService.verifyPassword(id, password);
-        System.out.println("DEBUG: verifyPassword for user " + id + ", result: " + isValid);
+        logger.debug("verifyPassword for user {}, result: {}", id, isValid);
         return ResponseEntity.ok(isValid);
     }
 }
