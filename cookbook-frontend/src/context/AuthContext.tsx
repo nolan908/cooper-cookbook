@@ -7,6 +7,7 @@ import {
 } from "react";
 import { jwtDecode } from "./jwtDecode";
 import axios from "axios";
+import { apiUrl } from "../api/config";
 
 interface AuthState {
   token: string | null;
@@ -59,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     axios
-      .get("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
+      .get(apiUrl("/auth/me"), { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         setUserId(res.data.id);
         setProfilePictureUrl(res.data.profilePictureUrl);

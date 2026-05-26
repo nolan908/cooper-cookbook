@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipeById, saveRecipe, getSavedRecipesByUser, deleteSavedRecipe } from "../api/client";
+import { apiUrl } from "../api/config";
 import { useAuth } from "../context/AuthContext";
 import type { Recipe, Ingredient, Step } from "../api/types";
 
@@ -62,7 +63,7 @@ export default function RecipeDetailPage() {
  if (!recipe || !userId) return;
  try {
  setForking(true);
- const response = await fetch(`/api/recipes/${recipe.id}/fork?userId=${userId}`, { method:"POST"});
+ const response = await fetch(apiUrl(`/recipes/${recipe.id}/fork?userId=${userId}`), { method:"POST"});
  const forkedRecipe = await response.json();
  navigate(`/recipes/${forkedRecipe.id}/edit`);
  } catch (error) { alert("Could not fork."); } finally { setForking(false); }
